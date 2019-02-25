@@ -10,6 +10,8 @@
     "apollo-client": "^2.4.13",
     "apollo-link-context": "^1.0.14",
     "apollo-link-http": "^1.5.11",
+    "firebase-admin": "^7.0.0",
+    "firebase-functions": "^2.2.0",
     "gatsby": "^2.1.17",
     "gatsby-image": "^2.0.29",
     "gatsby-plugin-manifest": "^2.0.19",
