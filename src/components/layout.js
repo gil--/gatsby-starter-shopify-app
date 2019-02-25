@@ -5,6 +5,7 @@ import { AppProvider } from "@shopify/polaris"
 import "@shopify/polaris/styles.css"
 
 import Header from "./header"
+import GraphqlProvider from "../providers/graphql"
 
 const CustomLinkComponent = ({ children, url, external, ...rest }) => {
   if (external) {
@@ -30,6 +31,10 @@ const CustomLinkComponent = ({ children, url, external, ...rest }) => {
   );
 };
 
+// TODO: use cookies
+const shop = "gatsbyjs.myshopify.com"
+const token = "123";
+
 const Layout = ({ children }) => (
   <StaticQuery
     query={graphql`
@@ -42,26 +47,25 @@ const Layout = ({ children }) => (
         }
       }
     `}
-    render={data => {
-      console.log(data.site.siteMetadata.shopifyApiKey)
-      return (
-      <>
-        <AppProvider
-          shopOrigin="gatsbyjs.myshopify.com"
-          apiKey={data.site.siteMetadata.shopifyApiKey}
-          linkComponent={CustomLinkComponent}
-          forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
+    render={data => (
+      <AppProvider
+        shopOrigin={shop}
+        apiKey={data.site.siteMetadata.shopifyApiKey}
+        linkComponent={CustomLinkComponent}
+        forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
+      >
+        <GraphqlProvider
+          shop={shop}
+          token={token}
         >
-          <>
-            <Header siteTitle={data.site.siteMetadata.title} />
-            <main>{children}</main>
-            <footer>
-              © {new Date().getFullYear()}. {data.site.siteMetadata.title}
-            </footer>
-          </>
-        </AppProvider>
-      </>
-    )}}
+          <Header siteTitle={data.site.siteMetadata.title} />
+          <main>{children}</main>
+          <footer>
+            © {new Date().getFullYear()}. {data.site.siteMetadata.title}
+          </footer>
+        </GraphqlProvider>
+      </AppProvider>
+    )}
   />
 )
 
