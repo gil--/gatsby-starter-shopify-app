@@ -1,3 +1,10 @@
+const proxy = require("http-proxy-middleware")
+const dotenv = require("dotenv");
+
+if (process.env.ENVIRONMENT !== "production") {
+  dotenv.config();
+}
+
 module.exports = {
   siteMetadata: {
     title: `Gatsby Default Starter`,
@@ -31,4 +38,35 @@ module.exports = {
     // To learn more, visit: https://gatsby.app/offline
     // 'gatsby-plugin-offline',
   ],
+  developMiddleware: app => {
+    app.use(
+      "/auth",
+      proxy({
+        target: "http://localhost:5001",
+        pathRewrite: {
+          "/auth": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/auth`,
+        },
+      })
+    )
+
+    app.use(
+      "/callback",
+      proxy({
+        target: "http://localhost:5001",
+        pathRewrite: {
+          "/callback": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/callback`,
+        },
+      })
+    )
+
+    app.use(
+      "/graphql",
+      proxy({
+        target: "http://localhost:5001",
+        pathRewrite: {
+          "/graphql": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/graphql`,
+        },
+      })
+    )
+  },
 }
