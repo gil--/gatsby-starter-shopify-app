@@ -5,6 +5,12 @@ if (process.env.ENVIRONMENT !== "production") {
   dotenv.config();
 }
 
+const {
+  SHOPIFY_APP_API_KEY,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_APP_ZONE,
+} = process.env;
+
 module.exports = {
   siteMetadata: {
     title: `Gatsby Default Starter`,
