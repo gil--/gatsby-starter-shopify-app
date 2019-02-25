@@ -48,7 +48,7 @@ module.exports = {
     app.use(
       "/auth",
       proxy({
-        target: "http://localhost:5001",
+        target: "http://localhost:5000",
         pathRewrite: {
           "/auth": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/auth`,
         },
@@ -58,7 +58,7 @@ module.exports = {
     app.use(
       "/callback",
       proxy({
-        target: "http://localhost:5001",
+        target: "http://localhost:5000",
         pathRewrite: {
           "/callback": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/callback`,
         },
@@ -68,7 +68,7 @@ module.exports = {
     app.use(
       "/graphql",
       proxy({
-        target: "http://localhost:5001",
+        target: "http://localhost:5000",
         pathRewrite: {
           "/graphql": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/graphql`,
         },
