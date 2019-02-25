@@ -1,21 +1,21 @@
 const proxy = require("http-proxy-middleware")
-const dotenv = require("dotenv");
 
-if (process.env.ENVIRONMENT !== "production") {
-  dotenv.config();
-}
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
 
 const {
-  SHOPIFY_APP_API_KEY,
   FIREBASE_PROJECT_ID,
   FIREBASE_APP_ZONE,
+  SHOPIFY_APP_API_KEY
 } = process.env;
 
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Default Starter`,
-    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
-    author: `@gatsbyjs`,
+    title: `Gatsby Starter Shopify App`,
+    description: `A Gatsby Starter to create a Shopify App`,
+    author: `@gilgnyc`,
+    shopifyApiKey: SHOPIFY_APP_API_KEY,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
