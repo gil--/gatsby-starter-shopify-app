@@ -10,6 +10,7 @@
     "apollo-client": "^2.4.13",
     "apollo-link-context": "^1.0.14",
     "apollo-link-http": "^1.5.11",
+    "axios": "^0.18.0",
     "firebase-admin": "^7.0.0",
     "firebase-functions": "^2.2.0",
     "gatsby": "^2.1.17",
@@ -25,7 +26,8 @@
     "react": "^16.8.3",
     "react-apollo": "^2.4.1",
     "react-dom": "^16.8.3",
-    "react-helmet": "^5.2.0"
+    "react-helmet": "^5.2.0",
+    "universal-cookie": "^3.0.7"
   },
   "devDependencies": {
     "prettier": "^1.16.4"
