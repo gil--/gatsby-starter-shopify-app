@@ -1,13 +1,37 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const axios = require('axios');
+const shopifyToken = require('shopify-token');
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+/*
+    /auth
+
+    Start initial Auth Process
+*/
+exports.auth = functions.https.onRequest(async (request, response) => {
+    try {
+        if (!request.body) {
+            return response.status(400).json({ status: 'error', body: 'Bad Request' });
+        }
+
+        const { shop } = request.body;
+        if (!shop) {
+            console.log('Missing {shop} in body');
+            return response.status(422).json({ status: 'error', body: 'Unprocessable Entity' });
+        }
+
+        shopifyToken.shop = shop.replace('.myshopify.com', ''); // TODO: remove, already handled in app
+        const nonce = shopifyToken.generateNonce();
+        const uri = shopifyToken.generateAuthUrl(shopifyToken.shop, undefined, nonce);
+
+        console.log(`Redirect to ${uri}`);
+        return response.status(200).json({ status: 'success', body: uri });
+    } catch (e) {
+        console.log(e);
+        return response.status(500).json({ status: 'error' });
+    }
+});
+
 
 /*
     Shopify Graphql Proxy Middleware

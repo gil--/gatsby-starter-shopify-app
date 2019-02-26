@@ -2385,6 +2385,11 @@ shebang-regex@^1.0.0:
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-1.0.0.tgz#da42f49740c0b42db2ca9728571cb190c98efea3"
   integrity sha1-2kL0l0DAtC2yypcoVxyxkMmO/qM=
 
+shopify-token@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/shopify-token/-/shopify-token-4.0.0.tgz#1d4416674864fab48860b4f341a2c8c4097be009"
+  integrity sha512-PQa7Zx5Am646H2Q/mHxQuZQduuvLr96HMBR4jrASAeA7I9bfu4ZACnDYoPLGuVNyYU8tCdicgKK3KjZomU5prg==
+
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
