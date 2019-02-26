@@ -1,7 +1,19 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const axios = require('axios');
-const shopifyToken = require('shopify-token');
+const ShopifyToken = require('shopify-token');
+
+const SHOPIFY_APP_NAME_URL = functions.config().shopify.app_name_url;
+const SHOPIFY_APP_URL = functions.config().shopify.app_url;
+
+const shopifyToken = new ShopifyToken({
+    redirectUri: `${SHOPIFY_APP_URL}/callback`,
+    sharedSecret: functions.config().shopify.app_shared_secret,
+    apiKey: functions.config().shopify.app_api_key,
+    scopes: functions.config().shopify.app_scopes,
+    accessMode: 'per-user',
+    timeout: 10000,
+});
 
 /*
     /auth
