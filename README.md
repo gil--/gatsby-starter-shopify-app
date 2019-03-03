@@ -2,6 +2,8 @@
 
 This Gatsby starter is a serverless Shopify app which runs using Firebase hosting and Firebase functions. It will allow for authenticated Shopify app access.
 
+> **Warning:** This app is not production ready. PRs are welcome as development continues towards a stable v1.0.0 release.
+
 ## Features
 - Firebase Firestore Realtime DB
 - Serverless Functions API layer
