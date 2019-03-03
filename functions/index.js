@@ -138,7 +138,7 @@ exports.graphql = functions.https.onRequest(async (request, response) => {
 
     if (!shopAccessToken || !shop || !query) {
         console.log('Missing access token or shop');
-        response.status(500).json({ status: 'error', body: 'Error mising required headers' });
+        response.status(403).json({ status: 'error', body: 'Error mising required headers' });
         return;
     }
 
