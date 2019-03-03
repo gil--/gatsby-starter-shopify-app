@@ -21,10 +21,10 @@ FIREBASE_PROJECT_ID=example-project-id
 4. Register a new [Shopify App](https://partners.shopify.com) in your Partners portal.
 5. Copy the API key and set it as *SHOPIFY_APP_API_KEY* in .env.development.
 6. Go to `https://console.firebase.google.com/project/{FIREBASE-APP-NAME-HERE}/settings/serviceaccounts/adminsdk` or Project Settings > Service accounts. Now generate a new Firebase Admin SDK for Node.js and click the "Generate new private key". This will download a json file which we will use to authenticate to the Firebase Admin SDK from within our functions.
-7. 
+
 7. Run `firebase login` to login and authenticate.
 8. Run `firebase init functions` and select the project you created in step 2.
-8. Add required local variables to Firebase config:
+9. Add required local variables to Firebase config:
 
 ```bash
 firebase functions:config:set \
@@ -52,9 +52,9 @@ shopify.app_name_url="my-firebase-app" \
 shopify.app_scopes="read_orders"
 ```
 
-9. To successfully use these env variables during local development, we need to download them to the `/functions` directory. To download, run: `cd ./functions && firebase functions:config:get>.runtimeconfig.json && cd ../`
+10. To successfully use these env variables during local development, we need to download them to the `/functions` directory. To download, run: `cd ./functions && firebase functions:config:get>.runtimeconfig.json && cd ../`
 
-10. In the Firebase console `https://console.firebase.google.com`, select your project and navigate to Database where you'll create a **Firestore Database**. Add a root collection called shops and add a base document with the following attributes:
+11. In the Firebase console `https://console.firebase.google.com`, select your project and navigate to Database where you'll create a **Firestore Database**. Add a root collection called shops and add a base document with the following attributes:
 
 | Name | Type | Value |
 | :- | :- | :- |
@@ -86,10 +86,9 @@ Shopify has two types of [access modes](https://help.shopify.com/en/api/getting-
 
 Whenever a merchant installs a Shopify app, they are presented with a permission screen asking to accept an app's request to access certain data such as orders, customers, and products. The app knows which permissions to accept through the `scopes` setting. This is set as the Firebase configuration value of `shopify.app_scopes`. Shopify has a [full list](https://help.shopify.com/en/api/getting-started/authentication/oauth/scopes) of API access scopes.
 
-
 ## Bugs/Issues
-- Does not run on Safari (iOS/Desktop)
 - Missing Billing API Integration (Charge Monthly Subscription)
 - Missing Webhooks (uninstall, GDPR, etc.)
 - Not *yet* production ready
 - Missing Integration Tests
+- Missing better bug tracking/integration (BugSnag or equivalent)
