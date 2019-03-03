@@ -14,6 +14,7 @@ export const isAuthenticated = () => {
         const shopifyDomain = getShopDomain(shop)
 
         if (!shopifyDomain) {
+            // TODO: redirect to install page
             throw "No Shop domain"
         }
 
