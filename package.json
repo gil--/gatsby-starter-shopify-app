@@ -6,6 +6,7 @@
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "dependencies": {
     "@shopify/polaris": "^3.9.0",
+    "@shopify/react-shopify-app-route-propagator": "^2.0.0",
     "apollo-cache-inmemory": "^1.4.3",
     "apollo-client": "^2.4.13",
     "apollo-link-context": "^1.0.14",
