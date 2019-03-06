@@ -53,6 +53,11 @@ const getShopDomain = (shopParam) => {
     return shopParam || cookies.get('shop')
 }
 
+export const getShopToken = () => {
+    const cookies = new Cookies()
+    return cookies.get('token')
+}
+
 const isAuthValid = ({ shop, token, expiresAt }) => {
     const cookies = new Cookies()
 
