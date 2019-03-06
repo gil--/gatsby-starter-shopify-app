@@ -5,6 +5,7 @@ import "@shopify/polaris/styles.css"
 import GraphqlProvider from "../providers/graphql"
 import Header from "../components/header"
 import { AppProvider } from "@shopify/polaris"
+import { getShopToken } from "../helpers/auth"
 
 const CustomLinkComponent = ({ children, url, external, ...rest }) => {
   if (external) {
@@ -33,7 +34,9 @@ class Layout extends React.Component {
   render() {
     // TODO: use cookies
     const shop = "gatsbyjs.myshopify.com"
-    const token = "123"
+    const token = getShopToken()
+
+    console.log(token)
 
     return (
       <StaticQuery
