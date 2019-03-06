@@ -18,6 +18,7 @@ module.exports = {
     shopifyApiKey: SHOPIFY_APP_API_KEY,
   },
   plugins: [
+    `gatsby-plugin-layout`,
     `gatsby-plugin-react-helmet`,
     {
       resolve: `gatsby-source-filesystem`,

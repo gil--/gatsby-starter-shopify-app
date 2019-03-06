@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import PropTypes from "prop-types"
 import ShopifyRoutePropagator from "@shopify/react-shopify-app-route-propagator"
-import { Link } from "gatsby"
+import { Button, Heading, Layout, Page } from '@shopify/polaris'
 import { Router } from "@reach/router"
 
 class SettingsWrapper extends Component {
@@ -10,8 +10,6 @@ class SettingsWrapper extends Component {
     }
 
     render() {
-        console.log(this.context.polaris)
-
         return (
             <div>
                 <ShopifyRoutePropagator location={this.props.location} app={this.context.polaris.appBridge} />
@@ -19,8 +17,16 @@ class SettingsWrapper extends Component {
                     <Hi path="/app/hi" />
                     <Bye path="/app/bye" />
                 </Router> */}
-                settings page
-                <Link to="/app/">Go to app home</Link>
+                <Page
+                    title="Settings"
+                >
+                    <Layout>
+                        <Layout.Section>
+                            <Heading>Settings Page</Heading>
+                            <Button url="/app/">Go to app home</Button>
+                        </Layout.Section>
+                    </Layout>
+                </Page>
             </div>
         )
     }

@@ -36,7 +36,7 @@ class StoreInfo extends Component {
 
                         return (
                             <Page
-                                title={shop && shop.name || 'App'}
+                                title="App Home"
                             >
                                 <Layout>
                                     <Layout.Section>

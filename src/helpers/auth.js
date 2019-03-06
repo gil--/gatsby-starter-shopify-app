@@ -11,7 +11,7 @@ export const isAuthenticated = () => {
     if (isAuthValid({ shop, token, expiresAt })) {
         return true
     } else {
-        const shopifyDomain = getShopDomain(shop)
+        const shopifyDomain = getShopDomain()
 
         if (!shopifyDomain) {
             // TODO: redirect to install page
@@ -48,30 +48,38 @@ export const isAuthenticated = () => {
     }
 }
 
-const getShopDomain = (shopParam) => {
+export const getShopDomain = () => {
+    const queryParams = window.location.search
+    const urlParams = new URLSearchParams(queryParams)
+    const shopDomain = urlParams.get('shop')
     const cookies = new Cookies()
-    return shopParam || cookies.get('shop')
+    return shopDomain || cookies.get(`shop`)
 }
 
 export const getShopToken = () => {
+    const shopDomain = getShopDomain()
     const cookies = new Cookies()
-    return cookies.get('token')
+    return cookies.get(`token_${shopDomain}`)
 }
 
 const isAuthValid = ({ shop, token, expiresAt }) => {
+    const shopDomain = getShopDomain()
     const cookies = new Cookies()
 
     let cookie = {};
-    cookie.shop = cookies.get('shop')
-    cookie.token = cookies.get('token')
-    cookie.expiresAt = cookies.get('expires_at')
+    cookie.shop = cookies.get(`shop`)
+    cookie.token = cookies.get(`token_${shopDomain}`)
+    cookie.expiresAt = cookies.get(`expires_at_${shopDomain}`)
 
     if (cookie.shop && cookie.token && cookie.expiresAt) {
         return true
     } else if (shop && token && expiresAt) {
-        cookies.set('shop', shop, { path: '/' })
-        cookies.set('token', token, { path: '/' })
-        cookies.set('expires_at', expiresAt, { path: '/' })
+        const expirationDate = new Date()
+        expirationDate.setTime(expirationDate.getTime() + (24 * 60 * 60 * 1000))
+
+        cookies.set(`shop`, shop, { path: '/', expires: expirationDate, })
+        cookies.set(`token_${shopDomain}`, token, { path: '/', expires: expirationDate, })
+        cookies.set(`expires_at_${shopDomain}`, expiresAt, { path: '/', expires: expirationDate, })
 
         return true
     }

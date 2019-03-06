@@ -1,22 +1,11 @@
 import React, { Component } from "react"
 
-import { isAuthenticated } from "../../helpers/auth"
-import Layout from "../../components/layout"
-
-import Welcome from "../../components/welcome"
-
+import StoreInfo from "../../components/store-info"
 
 class App extends Component {
-    async componentDidMount() {
-        console.log('hi!')
-        isAuthenticated()
-    }
-
     render = () => {
         return (
-            <Layout>
-                <Welcome location={this.props.location} />
-            </Layout>
+            <StoreInfo location={this.props.location} />
         )
     }
 }
