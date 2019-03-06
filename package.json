@@ -22,6 +22,7 @@
     "gatsby-plugin-sharp": "^2.0.22",
     "gatsby-source-filesystem": "^2.0.22",
     "gatsby-transformer-sharp": "^2.1.14",
+    "graphql-tag": "^2.10.1",
     "http-proxy-middleware": "^0.19.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.3",
