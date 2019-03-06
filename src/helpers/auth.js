@@ -1,5 +1,6 @@
 import Cookies from "universal-cookie"
 import axios from "axios"
+import { navigate } from "gatsby"
 
 export const isAuthenticated = () => {
     const queryParams = window.location.search
@@ -9,13 +10,14 @@ export const isAuthenticated = () => {
     const expiresAt = urlParams.get('expires_at')
 
     if (isAuthValid({ shop, token, expiresAt })) {
-        return true
+        return { shopDomain: shop }
     } else {
         const shopifyDomain = getShopDomain()
 
         if (!shopifyDomain) {
             // TODO: redirect to install page
             throw "No Shop domain"
+            //navigate("/app/")
         }
 
         axios.post('/auth', {
@@ -53,11 +55,11 @@ export const getShopDomain = () => {
     const urlParams = new URLSearchParams(queryParams)
     const shopDomain = urlParams.get('shop')
     const cookies = new Cookies()
-    return shopDomain || cookies.get(`shop`)
+    return shopDomain || cookies.get(`shop_${shopDomain}`)
 }
 
-export const getShopToken = () => {
-    const shopDomain = getShopDomain()
+export const getShopToken = (domain) => {
+    const shopDomain = domain || getShopDomain()
     const cookies = new Cookies()
     return cookies.get(`token_${shopDomain}`)
 }
@@ -67,7 +69,7 @@ const isAuthValid = ({ shop, token, expiresAt }) => {
     const cookies = new Cookies()
 
     let cookie = {};
-    cookie.shop = cookies.get(`shop`)
+    cookie.shop = cookies.get(`shop_${shopDomain}`)
     cookie.token = cookies.get(`token_${shopDomain}`)
     cookie.expiresAt = cookies.get(`expires_at_${shopDomain}`)
 
@@ -77,11 +79,11 @@ const isAuthValid = ({ shop, token, expiresAt }) => {
         const expirationDate = new Date()
         expirationDate.setTime(expirationDate.getTime() + (24 * 60 * 60 * 1000))
 
-        cookies.set(`shop`, shop, { path: '/', expires: expirationDate, })
+        cookies.set(`shop_${shopDomain}`, shop, { path: '/', expires: expirationDate, })
         cookies.set(`token_${shopDomain}`, token, { path: '/', expires: expirationDate, })
         cookies.set(`expires_at_${shopDomain}`, expiresAt, { path: '/', expires: expirationDate, })
 
-        return true
+        return { shopDomain: shop }
     }
 
     return false

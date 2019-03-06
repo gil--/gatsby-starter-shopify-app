@@ -15,7 +15,7 @@ exports.onCreatePage = async ({ page, actions }) => {
         // enable if you client-side router
         //page.matchPath = "/app/*"
         
-        page.context.layout = 'app'
+        //page.context.layout = 'app'
 
         // Update the page.
         createPage(page)

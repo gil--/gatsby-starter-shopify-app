@@ -5,7 +5,7 @@ import "@shopify/polaris/styles.css"
 import GraphqlProvider from "../providers/graphql"
 import Header from "../components/header"
 import { AppProvider } from "@shopify/polaris"
-import { getShopToken, getShopDomain, isAuthenticated } from "../helpers/auth"
+import { getShopToken, isAuthenticated } from "../helpers/auth"
 
 const CustomLinkComponent = ({ children, url, external, ...rest }) => {
     if (external) {
@@ -31,15 +31,25 @@ const CustomLinkComponent = ({ children, url, external, ...rest }) => {
     )
 }
 class AppLayout extends React.Component {
-    async componentDidMount() {
-        console.log('hi!')
-        isAuthenticated()
+    constructor(props) {
+        super(props);
+        
+        const { shopDomain } = isAuthenticated()
+        
+        this.state = {
+            shopDomain,
+        }
     }
 
     render() {
-        // TODO: use cookies
-        const shop = getShopDomain()
-        const token = getShopToken()
+        if (this.state.shopDomain === null) {
+            return (
+                <>Error with getting domain</>
+            )
+        }
+
+        const shop = this.state.shopDomain
+        const token = getShopToken(shop)
 
         return (
             <StaticQuery

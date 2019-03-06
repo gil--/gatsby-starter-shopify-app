@@ -23,7 +23,7 @@ class SettingsWrapper extends Component {
                     <Layout>
                         <Layout.Section>
                             <Heading>Settings Page</Heading>
-                            <Button url="/app/">Go to app home</Button>
+                            <Button url="/app">Go to app home</Button>
                         </Layout.Section>
                     </Layout>
                 </Page>
