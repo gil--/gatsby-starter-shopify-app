@@ -21,7 +21,7 @@ const GET_SHOP_INFO = gql`
     }
 `
 
-class Welcome extends Component {
+class StoreInfo extends Component {
     static contextTypes = {
         polaris: PropTypes.object,
     }
@@ -93,4 +93,4 @@ class Welcome extends Component {
     }
 }
 
-export default Welcome
+export default StoreInfo
