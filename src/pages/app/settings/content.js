@@ -4,7 +4,7 @@ import ShopifyRoutePropagator from "@shopify/react-shopify-app-route-propagator"
 import { Button, Heading, Layout, Page } from '@shopify/polaris'
 import { Router } from "@reach/router"
 
-class SettingsWrapper extends Component {
+class Content extends Component {
     static contextTypes = {
         polaris: PropTypes.object,
     }
@@ -32,4 +32,4 @@ class SettingsWrapper extends Component {
     }
 }
 
-export default SettingsWrapper
+export default Content
