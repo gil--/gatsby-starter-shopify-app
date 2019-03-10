@@ -1,8 +1,7 @@
 import React, { Component } from "react"
 import PropTypes from "prop-types"
 import ShopifyRoutePropagator from "@shopify/react-shopify-app-route-propagator"
-import { Button, Card, Layout, Page, FormLayout, TextField, PageActions } from '@shopify/polaris'
-import { Router } from "@reach/router"
+import { Card, Layout, Page, FormLayout, TextField, PageActions } from '@shopify/polaris'
 
 class Content extends Component {
     static contextTypes = {
@@ -13,10 +12,6 @@ class Content extends Component {
         return (
             <div>
                 <ShopifyRoutePropagator location={this.props.location} app={this.context.polaris.appBridge} />
-                {/* <Router>
-                    <Hi path="/app/hi" />
-                    <Bye path="/app/bye" />
-                </Router> */}
                 <Page
                     title="Settings"
                 >
