@@ -86,9 +86,9 @@ class StoreInfo extends Component {
                         )
                     }}
                 </Query>
-                <Router>
+                {/* <Router>
                     <Settings path="/app/settings" />
-                </Router>
+                </Router> */}
             </div>
         )
     }
