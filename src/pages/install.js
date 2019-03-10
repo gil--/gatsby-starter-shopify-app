@@ -1,7 +1,7 @@
-import React from 'react'
-import { AppProvider, Banner, Button, Card, DisplayText, Form, FormLayout, Layout, Page, TextField } from '@shopify/polaris';
+import React from "react"
+import { AppProvider, Banner, Button, Card, DisplayText, Form, FormLayout, Layout, Page, TextField } from "@shopify/polaris";
 //import styled from 'styled-components'
-import axios from 'axios'
+import axios from "axios"
 
 class Install extends React.Component {
     state = {
