@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 
-import StoreInfo from "../../components/store-info"
+import StoreInfo from "./store-info"
 
 class App extends Component {
     render = () => {

@@ -2,9 +2,11 @@ import React, { Component } from "react"
 import PropTypes from "prop-types"
 import ShopifyRoutePropagator from "@shopify/react-shopify-app-route-propagator"
 import { Router } from "@reach/router"
-import gql from 'graphql-tag'
-import { Query } from 'react-apollo'
-import { Button, Card, Heading, Layout, Page, SkeletonBodyText, SkeletonDisplayText } from '@shopify/polaris'
+import gql from "graphql-tag"
+import { Query } from "react-apollo"
+import { Button, Card, Heading, Layout, Page, SkeletonBodyText, SkeletonDisplayText } from "@shopify/polaris"
+
+import Settings from "./settings"
 
 const GET_SHOP_INFO = gql`
     query shopInfo {
@@ -84,10 +86,9 @@ class StoreInfo extends Component {
                         )
                     }}
                 </Query>
-                {/* <Router>
-                    <Hi path="/app/hi" />
-                    <Bye path="/app/bye" />
-                </Router> */}
+                <Router>
+                    <Settings path="/app/settings" />
+                </Router>
             </div>
         )
     }
