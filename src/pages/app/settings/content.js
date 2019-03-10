@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import PropTypes from "prop-types"
 import ShopifyRoutePropagator from "@shopify/react-shopify-app-route-propagator"
-import { Button, Heading, Layout, Page } from '@shopify/polaris'
+import { Button, Card, Layout, Page, FormLayout, TextField, PageActions } from '@shopify/polaris'
 import { Router } from "@reach/router"
 
 class Content extends Component {
@@ -21,9 +21,29 @@ class Content extends Component {
                     title="Settings"
                 >
                     <Layout>
+                        <Layout.AnnotatedSection
+                            title="App Settings"
+                            description="Shopify and your customers will use this information to contact you."
+                        >
+                            <Card sectioned>
+                                <FormLayout>
+                                    <TextField label="Store name" onChange={() => { }} />
+                                    <TextField type="email" label="Account email" onChange={() => { }} />
+                                </FormLayout>
+                            </Card>
+                        </Layout.AnnotatedSection>
                         <Layout.Section>
-                            <Heading>Settings Page</Heading>
-                            <Button url="/app">Go to app home</Button>
+                            <PageActions
+                                primaryAction={{
+                                    content: 'Save',
+                                }}
+                                secondaryActions={[
+                                    {
+                                        content: 'Back',
+                                        url: '/app',
+                                    },
+                                ]}
+                            />
                         </Layout.Section>
                     </Layout>
                 </Page>
