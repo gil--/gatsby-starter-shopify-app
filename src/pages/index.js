@@ -1,10 +1,26 @@
 import React, { Component }  from "react"
-import { Link } from "gatsby"
+import { Link, navigate } from "gatsby"
 
 class IndexPage extends Component {
+  componentDidMount() {
+    if (typeof window !== 'undefined') {
+      navigate(
+        `/app/`,
+        {
+          state: { 
+            params: window.location.search
+          },
+          replace: true,
+        }
+      )
+    }
+  }
+
   render = () => {
     return (
-      <Link to="/app">Go to app</Link>
+      <>
+        <p>Authenticating...</p>
+      </>
     )
   }
 }

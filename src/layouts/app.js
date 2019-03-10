@@ -31,25 +31,41 @@ const CustomLinkComponent = ({ children, url, external, ...rest }) => {
     )
 }
 class AppLayout extends React.Component {
-    constructor(props) {
-        super(props);
-        
-        const { shopDomain } = isAuthenticated()
-        
-        this.state = {
-            shopDomain,
-        }
+    state = {
+        shop: null,
+        isLoading: true,
+    }
+
+    componentDidMount() {
+        const urlParamString = this.props.children.props.location.state && this.props.children.props.location.state.params
+        const { shop } = isAuthenticated(urlParamString)
+
+        this.setState({
+            shop,
+            isLoading: false,
+        })
     }
 
     render() {
-        if (this.state.shopDomain === null) {
+        const { shop, isLoading } = this.state
+        const token = getShopToken(shop)
+
+        if (isLoading) {
             return (
-                <>Error with getting domain</>
+                <>
+                    <p>Initializing app...</p>
+                </>
             )
         }
 
-        const shop = this.state.shopDomain
-        const token = getShopToken(shop)
+        if (!shop || shop === null) {
+            return (
+                <>
+                    <p>Error initializing app...</p>
+                    <Link to="/install">Re-Install App</Link>
+                </>
+            )
+        }
 
         return (
             <StaticQuery
