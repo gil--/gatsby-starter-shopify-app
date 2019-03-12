@@ -41,7 +41,7 @@ export const isAuthenticated = (urlParamString) => {
                         window.parent.postMessage(message, `https://${shopifyDomain}`)
                     }
                 } else {
-                    throw "Invalid /auth API response";
+                    throw new Error("Invalid /auth API response")
                 }
             })
             .catch(error => {
@@ -62,7 +62,7 @@ export const getShopDomain = () => {
     const cookies = new Cookies()
     
     if (typeof parentDomain !== 'undefined') {
-        parentDomain = parentDomain.replace('https:\/\/', '')
+        parentDomain = parentDomain.replace('https://', '')
     }
 
     return shopDomain || cookies.get(`shop_${shopDomain}`) || parentDomain
