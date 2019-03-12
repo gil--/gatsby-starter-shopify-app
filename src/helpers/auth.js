@@ -1,74 +1,99 @@
 import Cookies from "universal-cookie"
 import axios from "axios"
+import { navigate } from "gatsby"
 
-export const isAuthenticated = () => {
-    const queryParams = window.location.search
-    const urlParams = new URLSearchParams(queryParams)
-    const shop = urlParams.get('shop')
-    const token = urlParams.get('token')
-    const expiresAt = urlParams.get('expires_at')
+export const isAuthenticated = (urlParamString) => {
+    if (typeof window !== 'undefined') {
+        const queryParams = urlParamString || window.location.search
+        const urlParams = new URLSearchParams(queryParams)
+        const shop = urlParams.get('shop')
+        const token = urlParams.get('token')
+        const expiresAt = urlParams.get('expires_at')
 
-    if (isAuthValid({ shop, token, expiresAt })) {
-        return true
-    } else {
-        const shopifyDomain = getShopDomain(shop)
+        if (isAuthValid({ shop, token, expiresAt })) {
+            return { shop }
+        } else {
+            const shopifyDomain = shop || getShopDomain()
 
-        if (!shopifyDomain) {
-            // TODO: redirect to install page
-            throw "No Shop domain"
-        }
-
-        axios.post('/auth', {
-            shop: shopifyDomain,
-        })
-        .then(response => {
-            if (response.data && response.data.body) {
-                const redirectUrl = response.data.body
-
-                if (window.top === window.self) {
-                    window.top.location.href = redirectUrl
-                } else {
-                    let normalizedLink = document.createElement('a')
-                    normalizedLink.href = redirectUrl
-
-                    const message = JSON.stringify({
-                        message: "Shopify.API.remoteRedirect",
-                        data: { location: normalizedLink.href }
-                    });
-                    window.parent.postMessage(message, `https://${shopifyDomain}`)
-                }
-            } else {
-                throw "Invalid /auth API response";
+            if (!shopifyDomain) {
+                navigate('/install')
+                return false
+                //throw "No Shop domain"
             }
-        })
-        .catch(error => {
-            console.log(error)
-            return false
-        })
+
+            axios.post('/auth', {
+                shop: shopifyDomain,
+            })
+            .then(response => {
+                if (response.data && response.data.body) {
+                    const redirectUrl = response.data.body
+
+                    if (window.top === window.self) {
+                        window.top.location.href = redirectUrl
+                    } else {
+                        let normalizedLink = document.createElement('a')
+                        normalizedLink.href = redirectUrl
+
+                        const message = JSON.stringify({
+                            message: "Shopify.API.remoteRedirect",
+                            data: { location: normalizedLink.href }
+                        });
+                        window.parent.postMessage(message, `https://${shopifyDomain}`)
+                    }
+                } else {
+                    throw new Error("Invalid /auth API response")
+                }
+            })
+            .catch(error => {
+                console.warn(error)                
+                return false
+            })
+        }
     }
+
+    return false
 }
 
-const getShopDomain = (shopParam) => {
+export const getShopDomain = () => {
+    const queryParams = window.location.search
+    const urlParams = new URLSearchParams(queryParams)
+    let parentDomain = document.location.ancestorOrigins[0] // if iframe
+    const shopDomain = urlParams.get('shop')
     const cookies = new Cookies()
-    return shopParam || cookies.get('shop')
+    
+    if (typeof parentDomain !== 'undefined') {
+        parentDomain = parentDomain.replace('https://', '')
+    }
+
+    return shopDomain || cookies.get(`shop_${shopDomain}`) || parentDomain
+}
+
+export const getShopToken = (domain) => {
+    const shopDomain = domain || getShopDomain()
+    const cookies = new Cookies()
+    return cookies.get(`token_${shopDomain}`)
 }
 
 const isAuthValid = ({ shop, token, expiresAt }) => {
+    const shopDomain = getShopDomain()
     const cookies = new Cookies()
-
-    let cookie = {};
-    cookie.shop = cookies.get('shop')
-    cookie.token = cookies.get('token')
-    cookie.expiresAt = cookies.get('expires_at')
+    const cookie = {
+        shop: cookies.get(`shop_${shopDomain}`),
+        token: cookies.get(`token_${shopDomain}`),
+        expiresAt: cookies.get(`expires_at_${shopDomain}`),
+    }
 
     if (cookie.shop && cookie.token && cookie.expiresAt) {
         return true
     } else if (shop && token && expiresAt) {
-        cookies.set('shop', shop, { path: '/' })
-        cookies.set('token', token, { path: '/' })
-        cookies.set('expires_at', expiresAt, { path: '/' })
+        const expirationDate = new Date()
+        expirationDate.setTime(expirationDate.getTime() + (24 * 60 * 60 * 1000))
 
-        return true
+        cookies.set(`shop_${shopDomain}`, shop, { path: '/', expires: expirationDate, })
+        cookies.set(`token_${shopDomain}`, token, { path: '/', expires: expirationDate, })
+        cookies.set(`expires_at_${shopDomain}`, expiresAt, { path: '/', expires: expirationDate, })
+
+        return { shopDomain: shop }
     }
 
     return false

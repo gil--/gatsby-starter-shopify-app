@@ -1,20 +1,35 @@
 import React, { Component }  from "react"
-import { Link } from "gatsby"
-
-import { isAuthenticated } from "../helpers/auth"
-import Layout from "../components/layout"
-
+import { navigate } from "gatsby"
+import { AppProvider, Card, Page } from "@shopify/polaris"
 class IndexPage extends Component {
-  async componentDidMount() {
-    console.log('hi')
-    isAuthenticated()
+  componentDidMount() {
+    if (typeof window !== 'undefined') {
+      navigate(
+        `/app/`,
+        {
+          state: { 
+            params: window.location.search
+          },
+          replace: true,
+        }
+      )
+    }
   }
 
   render = () => {
     return (
-      <Layout>
-        <Link to="/page-2/">Go to page 2</Link>
-      </Layout>
+      <AppProvider
+        shopOrigin=""
+        apiKey=""
+      >
+        <Page>
+          <Card>
+            <Card.Section>
+              <p>Authenticating...</p>
+            </Card.Section>
+          </Card>
+        </Page>
+      </AppProvider>
     )
   }
 }

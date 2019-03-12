@@ -13,20 +13,22 @@ This Gatsby starter is a serverless Shopify app which runs using Firebase hostin
 
 ## Setup
 1. Run `yarn` or `npm install` to install all depdencies
-2. Create a new Firebase project from the [Firebase Console](https://console.firebase.google.com/).
-3. Create a new file called `.env.development` in the root of this project and navigate to the `General Settings` page and copy the **Project ID** into .env. Set this to `FIREBASE_PROJECT_ID=`:
+2. Install Firebase CLI globally `npm i -g firebase-cli`
+3. Login to Firebase `firebase login`.
+4. Create a new Firebase project from the [Firebase Console](https://console.firebase.google.com/).
+5. Create a new file called `.env.development` in the root of this project and navigate to the `General Settings` page and copy the **Project ID** into .env. Set this to `FIREBASE_PROJECT_ID=`:
 
 ```bash
 FIREBASE_PROJECT_ID=example-project-id
 ```
 
-4. Register a new [Shopify App](https://partners.shopify.com) in your Partners portal.
-5. Copy the API key and set it as *SHOPIFY_APP_API_KEY* in .env.development.
-6. Go to `https://console.firebase.google.com/project/{FIREBASE-APP-NAME-HERE}/settings/serviceaccounts/adminsdk` or Project Settings > Service accounts. Now generate a new Firebase Admin SDK for Node.js and click the "Generate new private key". This will download a json file which we will use to authenticate to the Firebase Admin SDK from within our functions.
+6. Register a new [Shopify App](https://partners.shopify.com) in your Partners portal.
+7. Copy the API key and set it as *SHOPIFY_APP_API_KEY* in .env.development.
+8. Go to `https://console.firebase.google.com/project/{FIREBASE-APP-NAME-HERE}/settings/serviceaccounts/adminsdk` or Project Settings > Service accounts. Now generate a new Firebase Admin SDK for Node.js and click the "Generate new private key". This will download a json file which we will use to authenticate to the Firebase Admin SDK from within our functions.
 
-7. Run `firebase login` to login and authenticate.
-8. Run `firebase init functions` and select the project you created in step 2.
-9. Add required local variables to Firebase config:
+9. Run `firebase login` to login and authenticate.
+10. Run `firebase init functions` and select the project you created in step 2.
+11. Add required local variables to Firebase config:
 
 ```bash
 firebase functions:config:set \
@@ -54,9 +56,9 @@ shopify.app_name_url="my-firebase-app" \
 shopify.app_scopes="read_orders"
 ```
 
-10. To successfully use these env variables during local development, we need to download them to the `/functions` directory. To download, run: `cd ./functions && firebase functions:config:get>.runtimeconfig.json && cd ../`
+12. To successfully use these env variables during local development, we need to download them to the `/functions` directory. To download, run: `cd ./functions && firebase functions:config:get>.runtimeconfig.json && cd ../`
 
-11. In the Firebase console `https://console.firebase.google.com`, select your project and navigate to Database where you'll create a **Firestore Database**. Add a root collection called shops and add a base document with the following attributes:
+13. In the Firebase console `https://console.firebase.google.com`, select your project and navigate to Database where you'll create a **Firestore Database**. Add a root collection called shops and add a base document with the following attributes:
 
 | Name | Type | Value |
 | :- | :- | :- |
