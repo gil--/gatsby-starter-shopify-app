@@ -1,6 +1,6 @@
 import React, { Component }  from "react"
-import { Link, navigate } from "gatsby"
-
+import { navigate } from "gatsby"
+import { AppProvider, Card, Page } from "@shopify/polaris"
 class IndexPage extends Component {
   componentDidMount() {
     if (typeof window !== 'undefined') {
@@ -18,9 +18,18 @@ class IndexPage extends Component {
 
   render = () => {
     return (
-      <>
-        <p>Authenticating...</p>
-      </>
+      <AppProvider
+        shopOrigin=""
+        apiKey=""
+      >
+        <Page>
+          <Card>
+            <Card.Section>
+              <p>Authenticating...</p>
+            </Card.Section>
+          </Card>
+        </Page>
+      </AppProvider>
     )
   }
 }

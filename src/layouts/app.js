@@ -1,11 +1,13 @@
 import React from "react"
 import PropTypes from "prop-types"
 import { StaticQuery, graphql, Link } from "gatsby"
-import "@shopify/polaris/styles.css"
 import GraphqlProvider from "../providers/graphql"
-import Header from "../components/header"
-import { AppProvider } from "@shopify/polaris"
-import { getShopToken, isAuthenticated } from "../helpers/auth"
+import { AppProvider, Card, Layout, Page } from "@shopify/polaris"
+
+import "@shopify/polaris/styles.css"
+
+import { getShopToken, getShopDomain, isAuthenticated } from "../helpers/auth"
+//import Header from "../components/header"
 
 const CustomLinkComponent = ({ children, url, external, ...rest }) => {
     if (external) {
@@ -49,21 +51,45 @@ class AppLayout extends React.Component {
     render() {
         const { shop, isLoading } = this.state
         const token = getShopToken(shop)
+        let siteTitle = ''
+        const shopDomain = getShopDomain()
+        let content = ''
 
         if (isLoading) {
-            return (
-                <>
-                    <p>Initializing app...</p>
-                </>
+            content = (
+                <Card>
+                    <Card.Section>
+                        <p>Initializing app...</p>
+                    </Card.Section>
+                </Card>
             )
-        }
-
-        if (!shop || shop === null) {
-            return (
-                <>
-                    <p>Error initializing app...</p>
-                    <Link to="/install">Re-Install App</Link>
-                </>
+        } else if (!shop || shop === null) {
+            content = (
+                <Card>
+                    <Card.Section>
+                        <p>Error initializing app...</p>
+                        <Link to="/install">Re-Install App</Link>
+                    </Card.Section>
+                </Card>
+            
+            )
+        } else {
+            content = (
+                <GraphqlProvider
+                    shop={shop}
+                    token={token}
+                >
+                    <Page>
+                        <Layout>
+                            <Layout.Section>
+                                <main>{this.props.children}</main>
+                                <footer>
+                                    © {new Date().getFullYear()}. {siteTitle}
+                                </footer>
+                            </Layout.Section>
+                        </Layout>
+                    </Page>
+                </GraphqlProvider>
             )
         }
 
@@ -79,24 +105,19 @@ class AppLayout extends React.Component {
                         }
                     }
                 `}
-                render={data => (
-                    <AppProvider
-                        shopOrigin={shop}
-                        apiKey={data.site.siteMetadata.shopifyApiKey}
-                        linkComponent={CustomLinkComponent}
-                        forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
-                    >
-                        <GraphqlProvider
-                            shop={shop}
-                            token={token}
+                render={data => {
+                    siteTitle = data.site.siteMetadata.title
+                    return (
+                        <AppProvider
+                            shopOrigin={shop || shopDomain}
+                            apiKey={data.site.siteMetadata.shopifyApiKey}
+                            linkComponent={CustomLinkComponent}
+                            forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
                         >
-                            <main>{this.props.children}</main>
-                            <footer>
-                                © {new Date().getFullYear()}. {data.site.siteMetadata.title}
-                            </footer>
-                        </GraphqlProvider>
-                    </AppProvider>
-                )}
+                            {content}
+                        </AppProvider>
+                    )
+                }}
             />
         )
     }
