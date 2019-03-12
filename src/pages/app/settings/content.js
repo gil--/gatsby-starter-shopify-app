@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import PropTypes from "prop-types"
 import ShopifyRoutePropagator from "@shopify/react-shopify-app-route-propagator"
-import { Card, Layout, Page, FormLayout, TextField, PageActions } from '@shopify/polaris'
+import { Card, Layout, FormLayout, TextField, PageActions } from '@shopify/polaris'
 
 class Content extends Component {
     static contextTypes = {

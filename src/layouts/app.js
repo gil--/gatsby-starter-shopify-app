@@ -6,7 +6,7 @@ import { AppProvider, Card, Layout, Page } from "@shopify/polaris"
 
 import "@shopify/polaris/styles.css"
 
-import { getShopToken, getShopDomain, isAuthenticated } from "../helpers/auth"
+import { getShopToken, getShopDomain } from "../helpers/auth"
 //import Header from "../components/header"
 
 const CustomLinkComponent = ({ children, url, external, ...rest }) => {

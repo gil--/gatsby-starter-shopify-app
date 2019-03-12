@@ -2,12 +2,10 @@ import React, { Component }  from "react"
 import { navigate } from "gatsby"
 import { AppProvider, Card, Page } from "@shopify/polaris"
 
-import { getShopDomain, isAuthenticated } from "../helpers/auth"
+import { isAuthenticated } from "../helpers/auth"
 
 class IndexPage extends Component {
   componentDidMount = async () => {
-    const shopDomain = getShopDomain()
-
     if (typeof window !== 'undefined') {
       const { shop } = await isAuthenticated()
       
