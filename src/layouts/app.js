@@ -38,9 +38,8 @@ class AppLayout extends React.Component {
         isLoading: true,
     }
 
-    componentDidMount() {
-        const urlParamString = this.props.children.props.location.state && this.props.children.props.location.state.params
-        const { shop } = isAuthenticated(urlParamString)
+    componentDidMount = async () => {
+        const shop = this.props.children.props.location.state && this.props.children.props.location.state.shopDomain;
 
         this.setState({
             shop,
@@ -51,8 +50,8 @@ class AppLayout extends React.Component {
     render() {
         const { shop, isLoading } = this.state
         const token = getShopToken(shop)
-        let siteTitle = ''
         const shopDomain = getShopDomain()
+        let siteTitle = '' // convert to new Gatsy useStaticQuery hook
         let content = ''
 
         if (isLoading) {

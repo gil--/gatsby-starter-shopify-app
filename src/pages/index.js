@@ -1,14 +1,22 @@
 import React, { Component }  from "react"
 import { navigate } from "gatsby"
 import { AppProvider, Card, Page } from "@shopify/polaris"
+
+import { getShopDomain, isAuthenticated } from "../helpers/auth"
+
 class IndexPage extends Component {
-  componentDidMount() {
+  componentDidMount = async () => {
+    const shopDomain = getShopDomain()
+
     if (typeof window !== 'undefined') {
+      const { shop } = await isAuthenticated()
+      
       navigate(
         `/app/`,
         {
           state: { 
-            params: window.location.search
+            params: window.location.search,
+            shopDomain: shop,
           },
           replace: true,
         }
@@ -21,8 +29,9 @@ class IndexPage extends Component {
       <AppProvider
         shopOrigin=""
         apiKey=""
+        forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
       >
-        <Page>
+        <Page title="Authenticating...">
           <Card>
             <Card.Section>
               <p>Authenticating...</p>
