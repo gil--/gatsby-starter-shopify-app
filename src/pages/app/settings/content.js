@@ -28,6 +28,7 @@ class Content extends Component {
                         <PageActions
                             primaryAction={{
                                 content: 'Save',
+                                disabled: true,
                             }}
                             secondaryActions={[
                                 {
