@@ -162,6 +162,7 @@ exports.graphql = functions.https.onRequest(async (request, response) => {
             response.status(200).json(result.data);
             return;
         }).catch(error => {
+            console.log(error.response);
             response.status(500).json({ status: 'error', body: error.response && error.response.data.errors });
             return;
         })

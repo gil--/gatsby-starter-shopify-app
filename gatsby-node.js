@@ -11,7 +11,7 @@ exports.onCreatePage = async ({ page, actions }) => {
 
     // page.matchPath is a special key that's used for matching pages
     // only on the client.
-    if (page.path.match(/^\/app/)) {
+    if (!page.path.match(/^\/install/)) {
         // enable if you client-side router
         //page.matchPath = "/app/*"
         
