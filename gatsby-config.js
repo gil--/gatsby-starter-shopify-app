@@ -75,5 +75,15 @@ module.exports = {
         },
       })
     )
+
+    app.use(
+      "/activate_charge",
+      proxy({
+        target: "http://localhost:5001",
+        pathRewrite: {
+          "/activate_charge": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/activate_charge`,
+        },
+      })
+    )
   },
 }

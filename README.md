@@ -76,6 +76,7 @@ This Shopify App runs on Firebase serverless infrastructure using Firebase funct
 | :- | :- |
 | **/auth** | Begins initial process to create Shopify Admin authentication keys |
 | **/callback** | Create authentication keys, setups up or updates store information in Firestore, and creates billing subscription |
+| **/activate_charge** | Active App Subscription Charge |
 | **/graphql** | Proxies all Shopify admin API requests. Requires account with billing enabled. Note that Firebase functions does not allow external API requests on free accounts. As a result, you must add billing information to your Firebase account to successfully proxy the Shopify admin API. |
 
 > We currently don't use the common */api/**/* Firebase functions syntax with Express as I've found splitting the routes allows for easier debugging and clearer analytics. Cold starts have also gotten much better with Firebase functions which was one of the main drivers behind putting all API functions behind a common route.

@@ -3,6 +3,8 @@ const admin = require('firebase-admin');
 const axios = require('axios');
 const ShopifyToken = require('shopify-token');
 
+const { getShopifyApi, createRecurringApplicationCharge, hasActiveRecurringApplicationCharge } = require('./helpers/shopify');
+
 const SHOPIFY_APP_NAME_URL = functions.config().shopify.app_name_url;
 const SHOPIFY_APP_URL = functions.config().shopify.app_url;
 
@@ -55,7 +57,7 @@ exports.auth = functions.https.onRequest(async (request, response) => {
 
 
 /*
-    /api/callback
+    /callback
 
     Finish auth process and add shop to Firestore
 */
@@ -92,23 +94,58 @@ exports.callback = functions.https.onRequest(async (request, response) => {
 
             const shopRef = db.collection("shops").doc(shop)
             const shopDoc = await db.runTransaction(t => t.get(shopRef))
+            let isNewStore = false
             
             if (!shopDoc.exists) {
-                // shop doesn't exist; let's create                            
+                // shop doesn't exist; let's create
+                isNewStore = true
+
                 shopRef.set({
                     shop,
                     createdAt: admin.firestore.FieldValue.serverTimestamp(),
                     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
                 })
+
+                // add webhooks
+
+                /*
+
+                    const webhook = {
+                        topic: 'app/uninstalled',
+                        address: `${APP_URL}${UNINSTALL_ROUTE}`,
+                        format: 'json'
+                    };
+
+                    GDPR mandatory
+                    customers/redact
+                    shop/redact 
+
+                */
             }
 
             const userRef = db.collection(`shops/${shop}/users`).doc(`${tokenData.associated_user.id}`)
             userRef.set(tokenData)
 
+            /*
+                App Subscription Charges
+            */
+            const shopify = getShopifyApi({ shop, token });
+            const hasApplicationCharge = await hasActiveRecurringApplicationCharge(shopify);
+
+            if (!hasApplicationCharge) {
+                // let's begin billing process
+                const chargeUrl = await createRecurringApplicationCharge({ shopify, shop, token, isNewStore });
+                return response.status(200).redirect(chargeUrl);
+            }
+
+            /*
+                App Redirection
+            */
+
             // TODO: redirect to /auth/complete which will store creds and then redirect to index 
             //const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}/auth/complete${query}`
             const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}${query}`
-          
+
             console.log(`${shop} successfully added new auth token!`)
             return response.status(200).redirect(redirectUrl)
         } else {
@@ -119,6 +156,37 @@ exports.callback = functions.https.onRequest(async (request, response) => {
         console.log(e)
         return response.status(500).json({ status: 'Error occurred', error: e.stack })
     }
+});
+
+/*
+    /activate_charge
+
+    Shopify redirects to this route when a charge is accepted or declined
+*/
+exports.activate_charge = functions.https.onRequest(async (request, response) => {
+    const { charge_id: chargeId, shop, token } = request.query;
+    const shopify = getShopifyApi({ shop, token });
+
+    try {
+        const charge = await shopify.recurringApplicationCharge.get(chargeId);
+            
+        if (charge.status === 'accepted') {
+            return shopify.recurringApplicationCharge.activate(chargeId).then(() => {
+                // We redirect to the home page of the app in Shopify admin
+                const query = `?token=${token}&shop=${shop}`
+                const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}${query}`
+    
+                return response.status(200).redirect(redirectUrl);
+                //  response.redirect(getEmbeddedAppHome(shop))
+            });
+        }
+    } catch(error) {
+        console.log(error)
+    }
+
+    const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}/charge-declined`;
+    return response.status(401).redirect(redirectUrl);
+    // return response.render('charge_declined', { APP_URL });
 });
 
 /*
