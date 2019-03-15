@@ -50,7 +50,7 @@ exports.createRecurringApplicationCharge = async ({ shopify, shop, token, hasTri
         }
         */    
     } catch(error) {
-        console.log(error);
+        console.warn(error);
     }
 
     return false;
@@ -67,7 +67,7 @@ exports.hasActiveRecurringApplicationCharge = async (shopify) => {
             return true;
         }
     } catch(error) {
-        console.log(error);
+        console.warn(error);
     }
 
     return false;
