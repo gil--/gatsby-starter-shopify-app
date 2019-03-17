@@ -3,7 +3,12 @@ const admin = require('firebase-admin');
 const axios = require('axios');
 const ShopifyToken = require('shopify-token');
 
-const { getShopifyApi, createRecurringApplicationCharge, hasActiveRecurringApplicationCharge } = require('./helpers/shopify');
+const { 
+    getShopifyApi, 
+    createRecurringApplicationCharge, 
+    hasActiveRecurringApplicationCharge,
+    verifyWebhook,
+} = require('./helpers/shopify');
 
 const SHOPIFY_APP_NAME_URL = functions.config().shopify.app_name_url;
 const SHOPIFY_APP_URL = functions.config().shopify.app_url;
@@ -50,7 +55,7 @@ exports.auth = functions.https.onRequest(async (request, response) => {
         console.log(`Redirect to ${uri}`);
         return response.status(200).json({ status: 'success', body: uri });
     } catch (e) {
-        console.log(e);
+        console.warn(e);
         return response.status(500).json({ status: 'error' });
     }
 });
@@ -130,6 +135,17 @@ exports.callback = functions.https.onRequest(async (request, response) => {
                 App Subscription Charges
             */
             const shopify = getShopifyApi({ shop, token });
+
+            const webhook = {
+                topic: 'app/uninstalled',
+                address: `${functions.config().shopify.app_url}/webhook/uninstall`,
+                format: 'json'
+            };
+
+            console.log(webhook);
+
+            shopify.webhook.create(webhook);
+
             const hasApplicationCharge = await hasActiveRecurringApplicationCharge(shopify);
 
             if (!hasApplicationCharge) {
@@ -153,7 +169,7 @@ exports.callback = functions.https.onRequest(async (request, response) => {
             return response.status(500).json({ error: 'Error validating hmac' })
         }
     } catch (e) {
-        console.log(e)
+        console.warn(e)
         return response.status(500).json({ status: 'Error occurred', error: e.stack })
     }
 });
@@ -181,7 +197,7 @@ exports.activate_charge = functions.https.onRequest(async (request, response) =>
             });
         }
     } catch(error) {
-        console.log(error)
+        console.warn(error);
     }
 
     const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}/charge-declined`;
@@ -190,6 +206,8 @@ exports.activate_charge = functions.https.onRequest(async (request, response) =>
 });
 
 /*
+    /api/graphql
+
     Shopify Graphql Proxy Middleware
 */
 exports.graphql = functions.https.onRequest(async (request, response) => {
@@ -235,8 +253,113 @@ exports.graphql = functions.https.onRequest(async (request, response) => {
             return;
         })
     } catch (error) {
-        console.log(error.response);
+        console.warn(error.response);
         response.status(500).json({ status: 'error', body: error.response && error.response.data.errors });
         return;
     }
+});
+
+// =========================
+// Webhook Routes
+// =========================
+
+/*
+    /webhook/uninstall
+
+    This gets called by the uninstall webhook.
+    Perform app cleanup here.
+*/
+exports.uninstall = functions.https.onRequest((request, response) => {
+    const shop = request.get('x-shopify-shop-domain');
+    const topic = 'app/uninstalled';
+
+    if (!verifyWebhook(request, topic)) {
+        console.warn(`Uninstall Webhook HMAC Failed for ${shop} on webhook ${topic}`);
+        response.status(401).send('Webhook HMAC Failed');
+        return;
+    }
+
+    // Do shop cleanup here
+    // TODO: firebase store update
+
+    console.log(`Uninstalled ${shop} on webhook ${topic}`);
+    response.status(200).send('Uninstalled');
+    return;
+});
+
+/*******************************
+    Mandatory GDPR Webhooks
+    https://help.shopify.com/en/api/guides/gdpr-resources#mandatory-webhooks
+*******************************/
+
+/*
+    /webhook/customer_redact
+
+    Requests deletion of customer data
+*/
+exports.customer_redact = functions.https.onRequest((request, response) => {
+    const shop = request.get('x-shopify-shop-domain');
+    const topic = 'customers/redact';
+
+    if (!verifyWebhook(request, topic)) {
+        console.warn(`Webhook failed for ${shop} on webhook ${topic}`);
+        response.status(401).send('Webhook HMAC Failed');
+        return;
+    }
+
+    // 
+    // Implement customer cleanup here
+    //
+
+    console.log(`Successfully ran ${topic} for ${shop}`);
+    response.status(200).send('');
+    return;
+});
+
+/*
+    /webhook/customers_data_request
+
+    Requests to view stored customer data.
+*/
+exports.customers_data_request = functions.https.onRequest((request, response) => {
+    const shop = request.get('x-shopify-shop-domain');
+    const topic = 'customers/data_request';
+
+    if (!verifyWebhook(request, topic)) {
+        console.warn(`Webhook failed for ${shop} on webhook ${topic}`);
+        response.status(401).send('Webhook HMAC Failed');
+        return;
+    }
+
+    // 
+    // Retrieve customer data here
+    //
+
+    console.log(`Successfully ran ${topic} for ${shop}`);
+    response.status(200).send('');
+    return;
+});
+
+/*
+    /webhook/shop_redact
+
+    Requests deletion of shop data.
+*/
+exports.shop_redact = functions.https.onRequest((request, response) => {
+    const shop = request.get('x-shopify-shop-domain');
+    const topic = 'shop/redact';
+
+    if (!verifyWebhook(request, topic)) {
+        console.warn(`Webhook failed for ${shop} on webhook ${topic}`);
+        response.status(401).send('Webhook HMAC Failed');
+        return;
+    }
+
+    // 
+    // Implement shop cleanup here
+    //
+
+    console.log(`Successfully ran ${topic} for ${shop}`);
+    response.status(200).send('');
+    return;
 });

@@ -1,8 +1,12 @@
 const ShopifyApi = require('shopify-api-node');
 const functions = require('firebase-functions');
+const crypto = require('crypto');
 
+const SHOPIFY_API_SECRET = functions.config().shopify.app_shared_secret;
 const ACTIVATE_CHARGE_ROUTE = '/activate_charge';
 const APP_PLAN_NAME = '(test2) Starter Plan';
+const APP_PLAN_PRICE = 24.99;
+const APP_PLAN_TRIAL_DURATION = 7;
 
 exports.getShopifyApi = session => {
     const { shop, token } = session;
@@ -16,13 +20,13 @@ exports.getShopifyApi = session => {
 exports.createRecurringApplicationCharge = async ({ shopify, shop, token, hasTrial = false }) => {
     let appCharge = {
         name: APP_PLAN_NAME,
-        price: 24.99,
+        price: APP_PLAN_PRICE,
         return_url: `${functions.config().shopify.app_url}${ACTIVATE_CHARGE_ROUTE}?shop=${shop}&token=${token}&`,
         test: true,
     };
 
     if (hasTrial) {
-        appCharge.trial_days = 7;
+        appCharge.trial_days = APP_PLAN_TRIAL_DURATION;
     }
 
     try {
@@ -56,7 +60,7 @@ exports.createRecurringApplicationCharge = async ({ shopify, shop, token, hasTri
     return false;
 };
 
-exports.hasActiveRecurringApplicationCharge = async (shopify) => {
+exports.hasActiveRecurringApplicationCharge = async shopify => {
     try {
         const charges = await shopify.recurringApplicationCharge.list();
 
@@ -71,4 +75,28 @@ exports.hasActiveRecurringApplicationCharge = async (shopify) => {
     }
 
     return false;
+};
+
+const getWebhookTopic = request => {
+    return request.get('x-shopify-topic');
+}
+
+exports.verifyWebhook = (request, webhookTopic) => {
+    const topic = getWebhookTopic(request);
+    const hmac = request.get('x-shopify-hmac-sha256');
+    const rawBody = request.rawBody;
+
+    if (typeof hmac === "undefined" 
+        || typeof rawBody !== 'object'
+        || topic !== webhookTopic
+    ) {
+        return false;
+    }
+
+    const digest = crypto
+        .createHmac('SHA256', SHOPIFY_API_SECRET)
+        .update(request.rawBody)
+        .digest('base64');
+
+    return digest === hmac;
 };
