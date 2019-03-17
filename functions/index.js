@@ -10,6 +10,10 @@ const {
     verifyWebhook,
 } = require('./helpers/shopify');
 
+const {
+    APP_PLAN_NAME,
+} = require('./config');
+
 const SHOPIFY_APP_NAME_URL = functions.config().shopify.app_name_url;
 const SHOPIFY_APP_URL = functions.config().shopify.app_url;
 
@@ -107,6 +111,8 @@ exports.callback = functions.https.onRequest(async (request, response) => {
 
                 shopRef.set({
                     shop,
+                    isAppInstalled: true,
+                    hasActiveSubscription: false,
                     createdAt: admin.firestore.FieldValue.serverTimestamp(),
                     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
                 })
@@ -126,6 +132,12 @@ exports.callback = functions.https.onRequest(async (request, response) => {
                     shop/redact 
 
                 */
+            } else {
+                shopRef.set({
+                    isAppInstalled: true,
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                }, { merge: true });
             }
 
             const userRef = db.collection(`shops/${shop}/users`).doc(`${tokenData.associated_user.id}`)
@@ -141,8 +153,6 @@ exports.callback = functions.https.onRequest(async (request, response) => {
                 address: `${functions.config().shopify.app_url}/webhook/uninstall`,
                 format: 'json'
             };
-
-            console.log(webhook);
 
             shopify.webhook.create(webhook);
 
@@ -181,13 +191,26 @@ exports.callback = functions.https.onRequest(async (request, response) => {
 */
 exports.activate_charge = functions.https.onRequest(async (request, response) => {
     const { charge_id: chargeId, shop, token } = request.query;
+
+    if (!chargeId || !shop || !token) {
+        return response.status(401).send('Error');
+    }
+
+    const db = admin.firestore();
+    const shopRef = db.collection("shops").doc(shop)
     const shopify = getShopifyApi({ shop, token });
 
     try {
-        const charge = await shopify.recurringApplicationCharge.get(chargeId);
+        const charge = await shopify.recurringApplicationCharge.get(chargeId); 
             
         if (charge.status === 'accepted') {
             return shopify.recurringApplicationCharge.activate(chargeId).then(() => {
+                
+                shopRef.set({
+                    hasActiveSubscription: true,
+                    subscriptionPlan: APP_PLAN_NAME
+                }, { merge: true });
+        
                 // We redirect to the home page of the app in Shopify admin
                 const query = `?token=${token}&shop=${shop}`
                 const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}${query}`
@@ -199,6 +222,12 @@ exports.activate_charge = functions.https.onRequest(async (request, response) =>
     } catch(error) {
         console.warn(error);
     }
+
+    
+    shopRef.set({
+        hasActiveSubscription: false,
+        subscriptionPlan: APP_PLAN_NAME
+    }, { merge: true });
 
     const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}/charge-declined`;
     return response.status(401).redirect(redirectUrl);
@@ -273,14 +302,20 @@ exports.uninstall = functions.https.onRequest((request, response) => {
     const shop = request.get('x-shopify-shop-domain');
     const topic = 'app/uninstalled';
 
-    if (!verifyWebhook(request, topic)) {
+    if (!shop || !verifyWebhook(request, topic)) {
         console.warn(`Uninstall Webhook HMAC Failed for ${shop} on webhook ${topic}`);
         response.status(401).send('Webhook HMAC Failed');
         return;
     }
 
     // Do shop cleanup here
-    // TODO: firebase store update
+    const db = admin.firestore();
+    const shopRef = db.collection("shops").doc(shop)
+
+    shopRef.set({
+        hasActiveSubscription: false,
+        isAppInstalled: false,
+    }, { merge: true });
 
     console.log(`Uninstalled ${shop} on webhook ${topic}`);
     response.status(200).send('Uninstalled');

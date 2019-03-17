@@ -2,11 +2,14 @@ const ShopifyApi = require('shopify-api-node');
 const functions = require('firebase-functions');
 const crypto = require('crypto');
 
+const {
+    APP_PLAN_NAME,
+    ACTIVATE_CHARGE_ROUTE,
+    APP_PLAN_PRICE,
+    APP_PLAN_TRIAL_DURATION,
+} = require('../config');
+
 const SHOPIFY_API_SECRET = functions.config().shopify.app_shared_secret;
-const ACTIVATE_CHARGE_ROUTE = '/activate_charge';
-const APP_PLAN_NAME = '(test2) Starter Plan';
-const APP_PLAN_PRICE = 24.99;
-const APP_PLAN_TRIAL_DURATION = 7;
 
 exports.getShopifyApi = session => {
     const { shop, token } = session;
