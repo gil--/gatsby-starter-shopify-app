@@ -107,8 +107,8 @@ Shopify has two types of [access modes](https://help.shopify.com/en/api/getting-
 Whenever a merchant installs a Shopify app, they are presented with a permission screen asking to accept an app's request to access certain data such as orders, customers, and products. The app knows which permissions to accept through the `scopes` setting. This is set as the Firebase configuration value of `shopify.app_scopes`. Shopify has a [full list](https://help.shopify.com/en/api/getting-started/authentication/oauth/scopes) of API access scopes.
 
 ## Bugs/Issues
-- Missing Billing API Integration (Charge Monthly Subscription)
-- Missing Webhooks (uninstall, GDPR, etc.)
 - Not *yet* production ready
+- Does not work in Safari (iOS & Desktop) due to Safari 12 ITP Cookie changes. Will need to add workaround.
+- Missing Firebase on client-side
 - Missing Integration Tests
 - Missing better bug tracking/integration (BugSnag or equivalent)
