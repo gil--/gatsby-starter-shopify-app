@@ -13,6 +13,26 @@
       {
         "source": "/graphql",
         "function": "graphql"
+      },
+      {
+        "source": "/activate_charge",
+        "function": "activate_charge"
+      },
+      {
+        "source": "/webhook/uninstall",
+        "function": "uninstall"
+      },
+      {
+        "source": "/webhook/customer_redact",
+        "function": "customer_redact"
+      },
+      {
+        "source": "/webhook/customers_data_request",
+        "function": "customers_data_request"
+      },
+      {
+        "source": "/webhook/shop_redact",
+        "function": "shop_redact"
       }
     ]
   },
