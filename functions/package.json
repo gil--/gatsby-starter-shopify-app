@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "crypto": "^1.0.1",
     "firebase-admin": "~7.0.0",
     "firebase-functions": "^2.2.0",
     "shopify-api-node": "^2.18.1",
