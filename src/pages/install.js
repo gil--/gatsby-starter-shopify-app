@@ -83,7 +83,7 @@ class Install extends React.Component {
 
         return (
             <AppProvider
-                shopOrigin=""
+                shopOrigin={shop}
                 apiKey=""
             >
                 <Page title={`Install ${appName}`}>

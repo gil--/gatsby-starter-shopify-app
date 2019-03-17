@@ -4,7 +4,7 @@ import ShopifyRoutePropagator from "@shopify/react-shopify-app-route-propagator"
 //import { Router } from "@reach/router"
 import gql from "graphql-tag"
 import { Query } from "react-apollo"
-import { Button, Card, Heading, Layout, Page, SkeletonBodyText, SkeletonDisplayText } from "@shopify/polaris"
+import { Button, Card, Heading, Layout, SkeletonBodyText, SkeletonDisplayText } from "@shopify/polaris"
 
 //import Settings from "./settings"
 

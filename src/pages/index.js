@@ -1,15 +1,13 @@
 import React, { Component }  from "react"
 import { navigate } from "gatsby"
-import { AppProvider, Card, Page } from "@shopify/polaris"
+import { Card, Layout, Page } from "@shopify/polaris"
+
 class IndexPage extends Component {
-  componentDidMount() {
+  componentDidMount = async () => {
     if (typeof window !== 'undefined') {
       navigate(
         `/app/`,
         {
-          state: { 
-            params: window.location.search
-          },
           replace: true,
         }
       )
@@ -18,18 +16,19 @@ class IndexPage extends Component {
 
   render = () => {
     return (
-      <AppProvider
-        shopOrigin=""
-        apiKey=""
+      <Page
+        title="Authenticating..."
       >
-        <Page>
-          <Card>
-            <Card.Section>
-              <p>Authenticating...</p>
-            </Card.Section>
-          </Card>
-        </Page>
-      </AppProvider>
+        <Layout>
+          <Layout.Section>
+            <Card>
+              <Card.Section>
+                <p>Authenticating...</p>
+              </Card.Section>
+            </Card>
+          </Layout.Section>
+        </Layout>
+      </Page>
     )
   }
 }

@@ -2,11 +2,11 @@ import React from "react"
 import PropTypes from "prop-types"
 import { StaticQuery, graphql, Link } from "gatsby"
 import GraphqlProvider from "../providers/graphql"
-import { AppProvider, Card, Layout, Page } from "@shopify/polaris"
+import { AppProvider, Card } from "@shopify/polaris"
 
 import "@shopify/polaris/styles.css"
 
-import { getShopToken, getShopDomain, isAuthenticated } from "../helpers/auth"
+import { getShopToken, isAuthenticated } from "../helpers/auth"
 //import Header from "../components/header"
 
 const CustomLinkComponent = ({ children, url, external, ...rest }) => {
@@ -35,24 +35,27 @@ const CustomLinkComponent = ({ children, url, external, ...rest }) => {
 class AppLayout extends React.Component {
     state = {
         shop: null,
+        token: null,
         isLoading: true,
     }
 
-    componentDidMount() {
-        const urlParamString = this.props.children.props.location.state && this.props.children.props.location.state.params
-        const { shop } = isAuthenticated(urlParamString)
+    componentDidMount = async () => {
+        if (typeof window !== 'undefined') {
+            const { shop } = await isAuthenticated()
+            const token = await getShopToken(shop)
 
-        this.setState({
-            shop,
-            isLoading: false,
-        })
+            this.setState({
+                shop,
+                token,
+                isLoading: false,
+            })
+        }
     }
 
     render() {
-        const { shop, isLoading } = this.state
-        const token = getShopToken(shop)
-        let siteTitle = ''
-        const shopDomain = getShopDomain()
+        const { shop, token, isLoading } = this.state
+        const shopDomain = shop
+        //let appTitle = '' // convert to new Gatsy useStaticQuery hook
         let content = ''
 
         if (isLoading) {
@@ -63,7 +66,7 @@ class AppLayout extends React.Component {
                     </Card.Section>
                 </Card>
             )
-        } else if (!shop || shop === null) {
+        } else if (!shopDomain || shopDomain === null) {
             content = (
                 <Card>
                     <Card.Section>
@@ -76,19 +79,10 @@ class AppLayout extends React.Component {
         } else {
             content = (
                 <GraphqlProvider
-                    shop={shop}
+                    shop={shopDomain}
                     token={token}
                 >
-                    <Page>
-                        <Layout>
-                            <Layout.Section>
-                                <main>{this.props.children}</main>
-                                <footer>
-                                    © {new Date().getFullYear()}. {siteTitle}
-                                </footer>
-                            </Layout.Section>
-                        </Layout>
-                    </Page>
+                    {this.props.children}
                 </GraphqlProvider>
             )
         }
@@ -98,15 +92,13 @@ class AppLayout extends React.Component {
                 query={graphql`
                     query SiteTitleQuery2 {
                         site {
-                        siteMetadata {
-                            title
-                            shopifyApiKey
-                        }
+                            siteMetadata {
+                                shopifyApiKey
+                            }
                         }
                     }
                 `}
                 render={data => {
-                    siteTitle = data.site.siteMetadata.title
                     return (
                         <AppProvider
                             shopOrigin={shop || shopDomain}

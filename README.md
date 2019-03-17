@@ -6,9 +6,12 @@ This Gatsby starter is a serverless Shopify app which runs using Firebase hostin
 
 ## Features
 - Firebase Firestore Realtime DB
-- Serverless Functions API layer
-- Admin Graphql Serverless Proxy
-- Shopify Polaris ready (AppProvider, etc.)
+- Serverless Functions API layer (Firebase Functions)
+- Admin API (Graphql) Serverless Proxy
+- Shopify Polaris (AppProvider, etc.)
+- Application Charge  Logic (30 days) with variable trial duration
+- Webhook Validation & Creation
+- GDPR Ready (Including GDPR Webhooks)
 - CircleCI Config for easy continuous deployments to Firebase
 
 ## Setup
@@ -76,9 +79,22 @@ This Shopify App runs on Firebase serverless infrastructure using Firebase funct
 | :- | :- |
 | **/auth** | Begins initial process to create Shopify Admin authentication keys |
 | **/callback** | Create authentication keys, setups up or updates store information in Firestore, and creates billing subscription |
+| **/activate_charge** | Active App Subscription Charge |
 | **/graphql** | Proxies all Shopify admin API requests. Requires account with billing enabled. Note that Firebase functions does not allow external API requests on free accounts. As a result, you must add billing information to your Firebase account to successfully proxy the Shopify admin API. |
 
 > We currently don't use the common */api/**/* Firebase functions syntax with Express as I've found splitting the routes allows for easier debugging and clearer analytics. Cold starts have also gotten much better with Firebase functions which was one of the main drivers behind putting all API functions behind a common route.
+
+## Webhooks
+
+Webhook urls are prefix with `/webhook`.
+
+| Webhook Topic | Route | Purpose |
+| :- | :- | :- |
+| **app/uninstalled** | `/webhook/uninstall` | This gets called by the uninstall webhook |
+| **[GDPR Specific](https://help.shopify.com/en/api/guides/gdpr-resources) Webhooks** |  |  |
+| **customers/redact** | `/webhook/customer_redact` | Requests deletion of customer data |
+| **customers/data_request** | `/webhook/customers_data_request` | Requests to view stored customer data |
+| **shop/redact** | `/webhook/shop_redact` | Requests deletion of shop data |
 
 ## Shopify Configurations
 

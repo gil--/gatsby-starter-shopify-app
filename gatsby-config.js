@@ -56,6 +56,8 @@ module.exports = {
       })
     )
 
+    // Firebase Function Routes
+
     app.use(
       "/callback",
       proxy({
@@ -72,6 +74,56 @@ module.exports = {
         target: "http://localhost:5001",
         pathRewrite: {
           "/graphql": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/graphql`,
+        },
+      })
+    )
+
+    app.use(
+      "/activate_charge",
+      proxy({
+        target: "http://localhost:5001",
+        pathRewrite: {
+          "/activate_charge": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/activate_charge`,
+        },
+      })
+    )
+
+    app.use(
+      "/webhook/uninstall",
+      proxy({
+        target: "http://localhost:5001",
+        pathRewrite: {
+          "/webhook/uninstall": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/uninstall`,
+        },
+      })
+    )
+
+    app.use(
+      "/webhook/customer_redact",
+      proxy({
+        target: "http://localhost:5001",
+        pathRewrite: {
+          "/webhook/customer_redact": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/customer_redact`,
+        },
+      })
+    )
+
+    app.use(
+      "/webhook/customers_data_request",
+      proxy({
+        target: "http://localhost:5001",
+        pathRewrite: {
+          "/webhook/customers_data_request": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/customers_data_request`,
+        },
+      })
+    )
+
+    app.use(
+      "/webhook/shop_redact",
+      proxy({
+        target: "http://localhost:5001",
+        pathRewrite: {
+          "/webhook/shop_redact": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/shop_redact`,
         },
       })
     )
