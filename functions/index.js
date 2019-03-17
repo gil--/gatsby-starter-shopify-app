@@ -111,7 +111,7 @@ exports.callback = functions.https.onRequest(async (request, response) => {
 
                 shopRef.set({
                     shop,
-                    isAppInstalled: true,
+                    hasAppInstalled: true,
                     hasActiveSubscription: false,
                     createdAt: admin.firestore.FieldValue.serverTimestamp(),
                     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -134,7 +134,7 @@ exports.callback = functions.https.onRequest(async (request, response) => {
                 */
             } else {
                 shopRef.set({
-                    isAppInstalled: true,
+                    hasAppInstalled: true,
                     createdAt: admin.firestore.FieldValue.serverTimestamp(),
                     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
                 }, { merge: true });
@@ -314,7 +314,7 @@ exports.uninstall = functions.https.onRequest((request, response) => {
 
     shopRef.set({
         hasActiveSubscription: false,
-        isAppInstalled: false,
+        hasAppInstalled: false,
     }, { merge: true });
 
     console.log(`Uninstalled ${shop} on webhook ${topic}`);
