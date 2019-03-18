@@ -6,7 +6,13 @@ import { AppProvider, Card } from "@shopify/polaris"
 
 import "@shopify/polaris/styles.css"
 
-import { getShopToken, isAuthenticated } from "../helpers/auth"
+import { 
+    getShopToken,
+    getShopDomain,
+    isAuthenticated, 
+    setHmacQueryCookie,
+    refreshAuth
+} from "../helpers/auth"
 //import Header from "../components/header"
 
 const CustomLinkComponent = ({ children, url, external, ...rest }) => {
@@ -41,20 +47,30 @@ class AppLayout extends React.Component {
 
     componentDidMount = async () => {
         if (typeof window !== 'undefined') {
-            const { shop } = await isAuthenticated()
-            const token = await getShopToken(shop)
+            let isAuth = false
+            const queryParams = window.location.search
 
-            this.setState({
-                shop,
-                token,
-                isLoading: false,
-            })
+            if (queryParams && queryParams.includes('shop')) {
+                setHmacQueryCookie(queryParams)
+            }
+
+            isAuth = await isAuthenticated()
+
+            const shop = getShopDomain()
+            const token = getShopToken(shop)
+
+            if (isAuth) {
+                this.setState({
+                    shop,
+                    token,
+                    isLoading: false,
+                })
+            }
         }
     }
 
     render() {
         const { shop, token, isLoading } = this.state
-        const shopDomain = shop
         //let appTitle = '' // convert to new Gatsy useStaticQuery hook
         let content = ''
 
@@ -66,7 +82,7 @@ class AppLayout extends React.Component {
                     </Card.Section>
                 </Card>
             )
-        } else if (!shopDomain || shopDomain === null) {
+        } else if (!shop || shop === null) {
             content = (
                 <Card>
                     <Card.Section>
@@ -79,7 +95,7 @@ class AppLayout extends React.Component {
         } else {
             content = (
                 <GraphqlProvider
-                    shop={shopDomain}
+                    shop={shop}
                     token={token}
                 >
                     {this.props.children}
@@ -101,13 +117,13 @@ class AppLayout extends React.Component {
                 render={data => {
                     return (
                         <AppProvider
-                            shopOrigin={shop || shopDomain}
+                            shopOrigin={shop || ''}
                             apiKey={data.site.siteMetadata.shopifyApiKey}
                             linkComponent={CustomLinkComponent}
                             forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
                         >
                             {content}
-                        </AppProvider>
+                        </AppProvider> 
                     )
                 }}
             />
