@@ -17,7 +17,7 @@ class ChargeDeclined extends React.Component {
         return (
             <AppProvider
                 shopOrigin=""
-                apiKey=""
+                apiKey={process.env.GATSBY_SHOPIFY_APP_API_KEY}
             >
                 <Page title={`Charge Declined`}>
                     <Layout>

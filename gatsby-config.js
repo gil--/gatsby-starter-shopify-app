@@ -7,7 +7,6 @@ require("dotenv").config({
 const {
   FIREBASE_PROJECT_ID,
   FIREBASE_APP_ZONE,
-  SHOPIFY_APP_API_KEY
 } = process.env;
 
 module.exports = {
@@ -15,7 +14,6 @@ module.exports = {
     title: `Gatsby Starter Shopify App`,
     description: `A Gatsby Starter to create a Shopify App`,
     author: `@gilgnyc`,
-    shopifyApiKey: SHOPIFY_APP_API_KEY,
   },
   plugins: [
     `gatsby-plugin-layout`,

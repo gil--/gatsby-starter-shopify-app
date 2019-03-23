@@ -11,7 +11,10 @@ exports.onCreatePage = async ({ page, actions }) => {
 
     // page.matchPath is a special key that's used for matching pages
     // only on the client.
-    if (!page.path.match(/^\/install/) && !page.path.match(/^\/error/) && !page.path.match(/^\/reauth/)) {
+    if (!page.path.match(/^\/install/) 
+        && !page.path.match(/^\/error/) 
+        && !page.path.match(/^\/reauth/)
+        && !page.path.match(/^\/enable-cookies/)) {
         // enable if you client-side router
         //page.matchPath = "/app/*"
         

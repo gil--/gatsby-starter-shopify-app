@@ -92,6 +92,7 @@ exports.callback = functions.https.onRequest(async (request, response) => {
             const customToken = await admin.auth().createCustomToken(shop + tokenData.associated_user.id, {
                 shopifyToken: tokenData.access_token,
                 userId: tokenData.associated_user.id,
+                // TODO: subscription plan level
             })
 
             if (!customToken) {

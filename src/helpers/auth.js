@@ -2,7 +2,11 @@ import Cookies from "universal-cookie"
 import axios from "axios"
 import { navigate } from "gatsby"
 
+const TEST_COOKIE_NAME = 'shopify.cookies_persist';
+
 export const isAuthenticated = async (urlParamString) => {
+    console.log(window.location)
+
     const cookies = new Cookies()
 
     const queryParams = urlParamString 
@@ -34,7 +38,7 @@ export const getShopDomain = () => {
     const cookies = new Cookies()
     const queryParams = window.location.search || cookies.get(`hmac_query`)
     const urlParams = new URLSearchParams(queryParams)
-    let parentDomain = document.location.ancestorOrigins[0] // if iframe
+    let parentDomain = document.location.ancestorOrigins && document.location.ancestorOrigins[0] // if chrome iframe
     const shopDomain = urlParams.get('shop')
 
     if (typeof parentDomain !== 'undefined') {
@@ -103,6 +107,10 @@ export const refreshAuth = (shopDomain) => {
         return false
     }
 
+    if (!hasCookieAccess(shop)) {
+        return false
+    }
+
     return axios.post('/auth', {
         shop,
     })
@@ -130,4 +138,77 @@ export const refreshAuth = (shopDomain) => {
             console.warn(error)
             return false
         })
+}
+
+const hasCookieAccess = (shop) => {
+    if (shouldRequestStorage())  {
+        // redirect to enable_cookie
+        const redirectUrl = `${window.location.origin}/enable-cookies?shop=https://${shop}`
+
+        if (window.top === window.self) {
+            window.top.location.href = redirectUrl
+        } else {
+            let normalizedLink = document.createElement('a')
+            normalizedLink.href = redirectUrl
+
+            const message = JSON.stringify({
+                message: "Shopify.API.remoteRedirect",
+                data: { location: normalizedLink.href }
+            });
+            window.parent.postMessage(message, `https://${shop}`)
+        }
+        return false
+    }
+
+    return true
+}
+
+const shouldRequestStorage = () => {
+    const cookies = new Cookies()
+
+    if (cookies.get(TEST_COOKIE_NAME)) {
+        return false
+    }
+
+    if (isShopifyiOS()) {
+        return false
+    }
+
+    if (window.top === window.self) {
+        return false
+    }
+
+    // if (userAgentCanPartitionCookies()) {
+    //     return false
+    // }
+
+    if (!navigator.userAgent.match(/Safari/)) {
+        return false
+    }
+
+    if (navigator.userAgent.match(/Chrome/)) {
+        return false
+    }
+
+    return !cookies.get(TEST_COOKIE_NAME);
+}
+
+const isShopifyiOS = () => {
+    if (navigator.userAgent.indexOf('com.jadedpixel.pos') !== -1) {
+        return true
+    }
+
+    if (navigator.userAgent.indexOf('Shopify Mobile/iOS') !== -1) {
+        return true
+    }
+
+    return false
+}
+
+const userAgentCanPartitionCookies = () => {
+    if (isShopifyiOS()) {
+        return false
+    }
+
+    return navigator.userAgent.match(/Version\/12\.0\.?\d? Safari/)
 }

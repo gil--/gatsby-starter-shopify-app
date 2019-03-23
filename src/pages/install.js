@@ -84,7 +84,7 @@ class Install extends React.Component {
         return (
             <AppProvider
                 shopOrigin={shop}
-                apiKey=""
+                apiKey={process.env.GATSBY_SHOPIFY_APP_API_KEY}
             >
                 <Page title={`Install ${appName}`}>
                     <Layout>

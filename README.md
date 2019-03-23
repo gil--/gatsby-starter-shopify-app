@@ -108,7 +108,6 @@ Whenever a merchant installs a Shopify app, they are presented with a permission
 
 ## Bugs/Issues
 - Not *yet* production ready
-- Does not work in Safari (iOS & Desktop) due to Safari 12 ITP Cookie changes. Will need to add workaround.
 - Missing Firebase on client-side
 - Missing Integration Tests
 - Missing better bug tracking/integration (BugSnag or equivalent)

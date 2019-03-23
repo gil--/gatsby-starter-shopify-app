@@ -1,5 +1,5 @@
 import React from "react"
-import { AppProvider, Page, Button, Card } from "@shopify/polaris";
+import { AppProvider, Page, Card } from "@shopify/polaris";
 
 import {
     refreshAuth
@@ -16,7 +16,7 @@ class Reauth extends React.Component {
         return (
             <AppProvider
                 shopOrigin={''}
-                apiKey={''}
+                apiKey={process.env.GATSBY_SHOPIFY_APP_API_KEY}
                 forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
             >
                 <Page title="Authenticating...">
