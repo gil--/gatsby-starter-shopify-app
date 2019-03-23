@@ -104,29 +104,14 @@ class AppLayout extends React.Component {
         }
 
         return (
-            <StaticQuery
-                query={graphql`
-                    query SiteTitleQuery2 {
-                        site {
-                            siteMetadata {
-                                shopifyApiKey
-                            }
-                        }
-                    }
-                `}
-                render={data => {
-                    return (
-                        <AppProvider
-                            shopOrigin={shop || ''}
-                            apiKey={process.env.GATSBY_SHOPIFY_APP_API_KEY}
-                            linkComponent={CustomLinkComponent}
-                            forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
-                        >
-                            {content}
-                        </AppProvider> 
-                    )
-                }}
-            />
+            <AppProvider
+                shopOrigin={shop || ''}
+                apiKey={process.env.GATSBY_SHOPIFY_APP_API_KEY}
+                linkComponent={CustomLinkComponent}
+                forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
+            >
+                {content}
+            </AppProvider> 
         )
     }
 }
