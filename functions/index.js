@@ -243,7 +243,8 @@ exports.activate_charge = functions.https.onRequest(async (request, response) =>
 exports.graphql = functions.https.onRequest(async (request, response) => {
     // Make sure method is POST
     if (request.method === "GET") {
-        return response.status(500).json({ status: 'error', body: 'Error. Method must be POST' });
+        response.status(500).json({ status: 'error', body: 'Error. Method must be POST' });
+        return
     }
 
     const shop = request.get('x-shopify-shop-domain');
@@ -253,7 +254,8 @@ exports.graphql = functions.https.onRequest(async (request, response) => {
 
     if (!shopAccessToken || !shop || !query) {
         console.log('Missing access token or shop');
-        return response.status(403).json({ status: 'error', body: 'Error mising required headers' });
+        response.status(403).json({ status: 'error', body: 'Error mising required headers' });
+        return
     }
 
     try {
@@ -269,10 +271,12 @@ exports.graphql = functions.https.onRequest(async (request, response) => {
         }).then(result => {
             if (!result) {
                 console.error('No data found');
-                return response.status(500).json({ status: 'error', body: 'No data found.' });
+                response.status(500).json({ status: 'error', body: 'No data found.' });
+                return
             }
 
-            return response.status(200).json(result.data);
+            response.status(200).json(result.data);
+            return
         }).catch(error => {
             let errorCode = 500;
             
@@ -281,11 +285,13 @@ exports.graphql = functions.https.onRequest(async (request, response) => {
                 errorCode = 401;
             }
 
-            return response.status(errorCode).json({ status: 'error', body: error.response && error.response.data.errors });
+            response.status(errorCode).json({ status: 'error', body: error.response && error.response.data.errors });
+            return
         })
     } catch (error) {
         console.warn(error.response);
-        return response.status(500).json({ status: 'error', body: error.response && error.response.data.errors });
+        response.status(500).json({ status: 'error', body: error.response && error.response.data.errors });
+        return
     }
 });
 
@@ -377,11 +383,11 @@ exports.customers_data_request = functions.https.onRequest((request, response) =
 });
 
 /*
-    /webhook/shop_redact
+    /webhook/shop-redact
 
     Requests deletion of shop data.
 */
-exports.shop_redact = functions.https.onRequest((request, response) => {
+exports.webhookShopRedact = functions.https.onRequest((request, response) => {
     const shop = request.get('x-shopify-shop-domain');
     const topic = 'shop/redact';
 
