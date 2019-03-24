@@ -1,5 +1,9 @@
 # Gatsby Starter Shopify App
 
+[![CircleCI](https://circleci.com/gh/gil--/gatsby-starter-shopify-app.svg?style=svg)](https://circleci.com/gh/gil--/gatsby-starter-shopify-app)
+
+### **[Try Demo](https://gatsby-starter-shopify-app.firebaseapp.com/install/)**
+
 This Gatsby starter is a serverless Shopify app which runs using Firebase hosting and Firebase functions. It will allow for authenticated Shopify app access.
 
 > **Warning:** This app is not production ready. PRs are welcome as development continues towards a stable v1.0.0 release.
@@ -70,6 +74,8 @@ shopify.app_scopes="read_orders"
 | shop | string | shopify.myshopify.com |
 | createdAt | timestamp | |
 | updatedAt | timestamp | |
+
+Note, because some of the Firebase functions such as /graphql and /callback make outside requests to Shopify API, you must use a non-free plan such as the "Pay-as-you-go" which includes the free plan tier. You will see an error in your Firebase functions logs saying *"Billing account not configured. External network is not accessible and quotas are severely limited. Configure billing account to remove these restriction."* 
 
 ## API Layer
 

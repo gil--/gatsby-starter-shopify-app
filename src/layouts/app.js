@@ -1,6 +1,6 @@
 import React from "react"
 import PropTypes from "prop-types"
-import { StaticQuery, graphql, Link } from "gatsby"
+import { Link, navigate } from "gatsby"
 import GraphqlProvider from "../providers/graphql"
 import { AppProvider, Card } from "@shopify/polaris"
 
@@ -11,7 +11,6 @@ import {
     getShopDomain,
     isAuthenticated, 
     setHmacQueryCookie,
-    refreshAuth
 } from "../helpers/auth"
 //import Header from "../components/header"
 
@@ -39,10 +38,29 @@ const CustomLinkComponent = ({ children, url, external, ...rest }) => {
     )
 }
 class AppLayout extends React.Component {
-    state = {
-        shop: null,
-        token: null,
-        isLoading: true,
+    constructor(props) {
+        super(props)
+
+        let shop = null
+
+        if (typeof window !== 'undefined') {
+            shop = getShopDomain()
+
+            if (!shop || shop === null) {
+                navigate(
+                    `/install/`,
+                    {
+                        replace: true,
+                    }
+                )
+            }
+        }
+
+        this.state = {
+            shop,
+            token: null,
+            isLoading: true,
+        }
     }
 
     componentDidMount = async () => {
@@ -56,12 +74,10 @@ class AppLayout extends React.Component {
 
             isAuth = await isAuthenticated()
 
-            const shop = getShopDomain()
-            const token = getShopToken(shop)
+            const token = getShopToken(this.state.shop)
 
             if (isAuth) {
                 this.setState({
-                    shop,
                     token,
                     isLoading: false,
                 })
@@ -74,6 +90,10 @@ class AppLayout extends React.Component {
         //let appTitle = '' // convert to new Gatsy useStaticQuery hook
         let content = ''
 
+        if (!shop || shop === null) {
+            return <p>Redirecting...</p>
+        }
+
         if (isLoading) {
             content = (
                 <Card>
@@ -81,16 +101,6 @@ class AppLayout extends React.Component {
                         <p>Initializing app...</p>
                     </Card.Section>
                 </Card>
-            )
-        } else if (!shop || shop === null) {
-            content = (
-                <Card>
-                    <Card.Section>
-                        <p>Error initializing app...</p>
-                        <Link to="/install">Re-Install App</Link>
-                    </Card.Section>
-                </Card>
-            
             )
         } else {
             content = (
@@ -105,7 +115,7 @@ class AppLayout extends React.Component {
 
         return (
             <AppProvider
-                shopOrigin={shop || ''}
+                shopOrigin={shop}
                 apiKey={process.env.GATSBY_SHOPIFY_APP_API_KEY}
                 linkComponent={CustomLinkComponent}
                 forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
