@@ -5,8 +5,6 @@ import { navigate } from "gatsby"
 const TEST_COOKIE_NAME = 'shopify.cookies_persist';
 
 export const isAuthenticated = async (urlParamString) => {
-    console.log(window.location)
-
     const cookies = new Cookies()
 
     const queryParams = urlParamString 
