@@ -31,8 +31,8 @@
         "function": "customers_data_request"
       },
       {
-        "source": "/webhook/shop_redact",
-        "function": "shop_redact"
+        "source": "/webhook/shop-redact",
+        "function": "webhookShopRedact"
       }
     ]
   },
