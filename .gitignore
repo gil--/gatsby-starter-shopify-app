@@ -72,3 +72,4 @@ yarn-error.log
 
 # firebase
 .runtimeconfig.json
+.firebase
