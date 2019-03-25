@@ -90,6 +90,7 @@ class Install extends React.Component {
                 <Page title={`Install ${appName}`}>
                     <Layout>
                         <Layout.Section>
+                            <div style={{maxWidth: '450px', marginLeft: 'auto', marginRight: 'auto'}}>
                             {/* <InstallWrapper> */}
                                 {
                                     hasError &&
@@ -130,6 +131,7 @@ class Install extends React.Component {
                                     </Form>
                                 </Card>
                             {/* </InstallWrapper> */}
+                            </div>
                         </Layout.Section>
                     </Layout>
                 </Page>

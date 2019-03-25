@@ -46,7 +46,7 @@ class AppLayout extends React.Component {
         if (typeof window !== 'undefined') {
             shop = getShopDomain()
 
-            if (!shop || shop === null || typeof shop === "undefined") {
+            if (!shop || shop === null || typeof shop == "undefined") {
                 navigate(
                     `/install/`,
                     {
@@ -92,7 +92,7 @@ class AppLayout extends React.Component {
         //let appTitle = '' // convert to new Gatsy useStaticQuery hook
         let content = ''
 
-        if (!shop || shop === null || typeof shop === "undefined") {
+        if (!shop || shop === null || typeof shop == "undefined") {
             return <p>Redirecting...</p>
         }
 
@@ -117,7 +117,7 @@ class AppLayout extends React.Component {
 
         return (
             <AppProvider
-                shopOrigin={shop}
+                shopOrigin={shop || "shopify.com"}
                 apiKey={process.env.GATSBY_SHOPIFY_APP_API_KEY}
                 linkComponent={CustomLinkComponent}
                 forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
