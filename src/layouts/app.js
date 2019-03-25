@@ -46,7 +46,7 @@ class AppLayout extends React.Component {
         if (typeof window !== 'undefined') {
             shop = getShopDomain()
 
-            if (!shop || shop === null) {
+            if (!shop || shop === null || typeof shop === "undefined") {
                 navigate(
                     `/install/`,
                     {
@@ -54,6 +54,8 @@ class AppLayout extends React.Component {
                     }
                 )
             }
+
+            console.log(shop)
         }
 
         this.state = {
@@ -90,7 +92,7 @@ class AppLayout extends React.Component {
         //let appTitle = '' // convert to new Gatsy useStaticQuery hook
         let content = ''
 
-        if (!shop || shop === null) {
+        if (!shop || shop === null || typeof shop === "undefined") {
             return <p>Redirecting...</p>
         }
 
