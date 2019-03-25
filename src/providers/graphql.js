@@ -12,7 +12,7 @@ import { clearAppCookies } from "../helpers/auth"
 
 const GraphqlProvider = ({ children, shop, token }) => {
     if (typeof window !== 'undefined') {
-        const httpLink = createHttpLink({ uri: `/graphql` })
+        const httpLink = createHttpLink({ uri: `/api/graphql` })
 
         const middlewareLink = setContext(() => ({
             headers: {

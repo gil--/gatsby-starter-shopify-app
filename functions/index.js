@@ -186,11 +186,11 @@ exports.callback = functions.https.onRequest(async (request, response) => {
 });
 
 /*
-    /activate_charge
+    /api/activate-charge
 
     Shopify redirects to this route when a charge is accepted or declined
 */
-exports.activate_charge = functions.https.onRequest(async (request, response) => {
+exports.activateCharge = functions.https.onRequest(async (request, response) => {
     const { charge_id: chargeId, shop, token } = request.query;
 
     if (!chargeId || !shop || !token) {

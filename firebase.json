@@ -11,12 +11,12 @@
         "function": "callback"
       },
       {
-        "source": "/graphql",
+        "source": "/api/graphql",
         "function": "graphql"
       },
       {
-        "source": "/activate_charge",
-        "function": "activate_charge"
+        "source": "/api/activate-charge",
+        "function": "activateCharge"
       },
       {
         "source": "/webhook/uninstall",
