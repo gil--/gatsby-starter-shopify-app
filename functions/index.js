@@ -104,11 +104,11 @@ exports.callback = functions.https.onRequest(async (request, response) => {
 
             const shopRef = db.collection("shops").doc(shop)
             const shopDoc = await db.runTransaction(t => t.get(shopRef))
-            let isNewStore = false
+            let hasTrial = false
             
             if (!shopDoc.exists) {
                 // shop doesn't exist; let's create
-                isNewStore = true
+                hasTrial = true
 
                 shopRef.set({
                     shop,
@@ -161,7 +161,7 @@ exports.callback = functions.https.onRequest(async (request, response) => {
 
             if (!hasApplicationCharge) {
                 // let's begin billing process
-                const chargeUrl = await createRecurringApplicationCharge({ shopify, shop, token, isNewStore });
+                const chargeUrl = await createRecurringApplicationCharge({ shopify, shop, token, expiresAt, hasTrial });
                 return response.status(200).redirect(chargeUrl);
             }
 
@@ -191,7 +191,7 @@ exports.callback = functions.https.onRequest(async (request, response) => {
     Shopify redirects to this route when a charge is accepted or declined
 */
 exports.activateCharge = functions.https.onRequest(async (request, response) => {
-    const { charge_id: chargeId, shop, token } = request.query;
+    const { charge_id: chargeId, shop, token, expires_at, uid } = request.query;
 
     if (!chargeId || !shop || !token) {
         return response.status(401).send('Error');
@@ -202,20 +202,24 @@ exports.activateCharge = functions.https.onRequest(async (request, response) => 
     const shopify = getShopifyApi({ shop, token });
 
     try {
-        const charge = await shopify.recurringApplicationCharge.get(chargeId); 
+        const charge = await shopify.recurringApplicationCharge.get(chargeId);
+
+        console.log(charge);
             
         if (charge.status === 'accepted') {
+            console.log('1')
             return shopify.recurringApplicationCharge.activate(chargeId).then(() => {
-                
+                console.log('2')
                 shopRef.set({
                     hasActiveSubscription: true,
                     subscriptionPlan: APP_PLAN_NAME
                 }, { merge: true });
         
                 // We redirect to the home page of the app in Shopify admin
-                const query = `?token=${token}&shop=${shop}`
+                const query = `?token=${token}&shop=${shop}&expires_at=${expires_at}&uid=${uid}`
                 const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}${query}`
     
+                console.log('3')
                 return response.status(200).redirect(redirectUrl);
                 //  response.redirect(getEmbeddedAppHome(shop))
             });
@@ -223,7 +227,6 @@ exports.activateCharge = functions.https.onRequest(async (request, response) => 
     } catch(error) {
         console.warn(error);
     }
-
     
     shopRef.set({
         hasActiveSubscription: false,

@@ -20,11 +20,11 @@ exports.getShopifyApi = session => {
     });
 };
 
-exports.createRecurringApplicationCharge = async ({ shopify, shop, token, hasTrial = false }) => {
+exports.createRecurringApplicationCharge = async ({ shopify, shop, token, expiresAt, hasTrial = false }) => {
     let appCharge = {
         name: APP_PLAN_NAME,
         price: APP_PLAN_PRICE,
-        return_url: `${functions.config().shopify.app_url}${ACTIVATE_CHARGE_ROUTE}?shop=${shop}&token=${token}&`,
+        return_url: `${functions.config().shopify.app_url}${ACTIVATE_CHARGE_ROUTE}?shop=${shop}&token=${token}&expires_at=${expiresAt}`,
         test: true,
     };
 

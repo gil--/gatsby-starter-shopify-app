@@ -67,21 +67,21 @@ module.exports = {
     )
 
     app.use(
-      "/graphql",
+      "/api/graphql",
       proxy({
         target: "http://localhost:5001",
         pathRewrite: {
-          "/graphql": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/graphql`,
+          "/api/graphql": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/graphql`,
         },
       })
     )
 
     app.use(
-      "/activate_charge",
+      "/api/activate-charge",
       proxy({
         target: "http://localhost:5001",
         pathRewrite: {
-          "/activate_charge": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/activate_charge`,
+          "/api/activate-charge": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/activateCharge`,
         },
       })
     )
@@ -117,11 +117,11 @@ module.exports = {
     )
 
     app.use(
-      "/webhook/shop_redact",
+      "/webhook/shop-redact",
       proxy({
         target: "http://localhost:5001",
         pathRewrite: {
-          "/webhook/shop_redact": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/shop_redact`,
+          "/webhook/shop-redact": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/webhookShopRedact`,
         },
       })
     )

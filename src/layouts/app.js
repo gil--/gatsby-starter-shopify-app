@@ -54,8 +54,6 @@ class AppLayout extends React.Component {
                     }
                 )
             }
-
-            console.log(shop)
         }
 
         this.state = {
@@ -117,7 +115,7 @@ class AppLayout extends React.Component {
 
         return (
             <AppProvider
-                shopOrigin={shop || "shopify.com"}
+                shopOrigin={shop}
                 apiKey={process.env.GATSBY_SHOPIFY_APP_API_KEY}
                 linkComponent={CustomLinkComponent}
                 forceRedirect={(process.env.NODE_ENV === 'development') ? false : true}
