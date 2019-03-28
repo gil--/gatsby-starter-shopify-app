@@ -1,9 +1,9 @@
 {
-  "name": "gatsby-starter-default",
-  "private": true,
-  "description": "A simple starter to get up and developing quickly with Gatsby",
-  "version": "0.1.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "name": "gatsby-starter-shopify-app",
+  "private": false,
+  "description": "A Gatsby Starter to create a Shopify App",
+  "version": "0.0.1",
+  "author": "Gil Greenberg <gilgreenberg@gmail.com>",
   "dependencies": {
     "@shopify/polaris": "^3.9.0",
     "@shopify/react-shopify-app-route-propagator": "^2.0.0",
