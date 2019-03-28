@@ -194,48 +194,45 @@ exports.activateCharge = functions.https.onRequest(async (request, response) => 
     const { charge_id: chargeId, shop, token, expires_at, uid } = request.query;
 
     if (!chargeId || !shop || !token) {
-        return response.status(401).send('Error');
+        response.status(401).send('Error');
     }
 
     const db = admin.firestore();
     const shopRef = db.collection("shops").doc(shop)
     const shopify = getShopifyApi({ shop, token });
+    const redirectUrl401 = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}/charge-declined`;
 
     try {
         const charge = await shopify.recurringApplicationCharge.get(chargeId);
-
-        console.log(charge);
             
         if (charge.status === 'accepted') {
-            console.log('1')
-            return shopify.recurringApplicationCharge.activate(chargeId).then(() => {
-                console.log('2')
-                shopRef.set({
-                    hasActiveSubscription: true,
-                    subscriptionPlan: APP_PLAN_NAME
-                }, { merge: true });
-        
-                // We redirect to the home page of the app in Shopify admin
-                const query = `?token=${token}&shop=${shop}&expires_at=${expires_at}&uid=${uid}`
-                const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}${query}`
-    
-                console.log('3')
-                return response.status(200).redirect(redirectUrl);
-                //  response.redirect(getEmbeddedAppHome(shop))
-            });
+
+            shopRef.set({
+                hasActiveSubscription: true,
+                subscriptionPlan: APP_PLAN_NAME
+            }, { merge: true });
+
+            const isChargeActive = await shopify.recurringApplicationCharge.activate(chargeId);
+            
+            // We redirect to the home page of the app in Shopify admin
+            const query = `?token=${token}&shop=${shop}&expires_at=${expires_at}&uid=${uid}`
+            const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}${query}`
+
+            response.status(200).redirect(redirectUrl);
+            //  response.redirect(getEmbeddedAppHome(shop))
+        } else {
+            shopRef.set({
+                hasActiveSubscription: false,
+                subscriptionPlan: APP_PLAN_NAME
+            }, { merge: true });
+
+            response.status(401).redirect(redirectUrl401);
+            // return response.render('charge_declined', { APP_URL });
         }
     } catch(error) {
         console.warn(error);
+        response.status(401).redirect(redirectUrl401);
     }
-    
-    shopRef.set({
-        hasActiveSubscription: false,
-        subscriptionPlan: APP_PLAN_NAME
-    }, { merge: true });
-
-    const redirectUrl = `https://${shop}/admin/apps/${SHOPIFY_APP_NAME_URL}/charge-declined`;
-    return response.status(401).redirect(redirectUrl);
-    // return response.render('charge_declined', { APP_URL });
 });
 
 /*
