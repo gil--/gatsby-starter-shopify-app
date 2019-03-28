@@ -20,15 +20,15 @@
       },
       {
         "source": "/webhook/uninstall",
-        "function": "uninstall"
+        "function": "webhookUninstall"
       },
       {
-        "source": "/webhook/customer_redact",
-        "function": "customer_redact"
+        "source": "/webhook/customer-redact",
+        "function": "webhookCustomerRedact"
       },
       {
-        "source": "/webhook/customers_data_request",
-        "function": "customers_data_request"
+        "source": "/webhook/customers-data-request",
+        "function": "webhookCustomersDataRequest"
       },
       {
         "source": "/webhook/shop-redact",

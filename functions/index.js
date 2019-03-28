@@ -308,7 +308,7 @@ exports.graphql = functions.https.onRequest(async (request, response) => {
     This gets called by the uninstall webhook.
     Perform app cleanup here.
 */
-exports.uninstall = functions.https.onRequest((request, response) => {
+exports.webhookUninstall = functions.https.onRequest(async (request, response) => {
     const shop = request.get('x-shopify-shop-domain');
     const topic = 'app/uninstalled';
 
@@ -320,7 +320,7 @@ exports.uninstall = functions.https.onRequest((request, response) => {
 
     // Do shop cleanup here
     const db = admin.firestore();
-    const shopRef = db.collection("shops").doc(shop)
+    const shopRef = await db.collection("shops").doc(shop)
 
     shopRef.set({
         hasActiveSubscription: false,
@@ -338,11 +338,11 @@ exports.uninstall = functions.https.onRequest((request, response) => {
 *******************************/
 
 /*
-    /webhook/customer_redact
+    /webhook/customer-redact
 
     Requests deletion of customer data
 */
-exports.customer_redact = functions.https.onRequest((request, response) => {
+exports.webhookCustomerRedact = functions.https.onRequest((request, response) => {
     const shop = request.get('x-shopify-shop-domain');
     const topic = 'customers/redact';
 
@@ -362,11 +362,11 @@ exports.customer_redact = functions.https.onRequest((request, response) => {
 });
 
 /*
-    /webhook/customers_data_request
+    /webhook/customers-data-request
 
     Requests to view stored customer data.
 */
-exports.customers_data_request = functions.https.onRequest((request, response) => {
+exports.webhookCustomersDataRequest = functions.https.onRequest((request, response) => {
     const shop = request.get('x-shopify-shop-domain');
     const topic = 'customers/data_request';
 

@@ -91,27 +91,27 @@ module.exports = {
       proxy({
         target: "http://localhost:5001",
         pathRewrite: {
-          "/webhook/uninstall": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/uninstall`,
+          "/webhook/uninstall": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/webhookUninstall`,
         },
       })
     )
 
     app.use(
-      "/webhook/customer_redact",
+      "/webhook/customer-redact",
       proxy({
         target: "http://localhost:5001",
         pathRewrite: {
-          "/webhook/customer_redact": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/customer_redact`,
+          "/webhook/customer-redact": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/webhookCustomerRedact`,
         },
       })
     )
 
     app.use(
-      "/webhook/customers_data_request",
+      "/webhook/customers-data-request",
       proxy({
         target: "http://localhost:5001",
         pathRewrite: {
-          "/webhook/customers_data_request": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/customers_data_request`,
+          "/webhook/customers-data-request": `/${FIREBASE_PROJECT_ID}/${FIREBASE_APP_ZONE || 'us-central1'}/webhookCustomersDataRequest`,
         },
       })
     )
