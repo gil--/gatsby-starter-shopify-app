@@ -77,7 +77,7 @@ shopify.app_scopes="read_orders"
 | createdAt | timestamp | |
 | updatedAt | timestamp | |
 
-Note, because some of the Firebase functions such as /graphql and /callback make outside requests to Shopify API, you must use a non-free plan such as the "Pay-as-you-go" which includes the free plan tier. You will see an error in your Firebase functions logs saying *"Billing account not configured. External network is not accessible and quotas are severely limited. Configure billing account to remove these restriction."* 
+Note, because some of the Firebase functions such as /api/graphql and /callback make outside requests to Shopify API, you must use a non-free plan such as the "Pay-as-you-go" which includes the free plan tier. You will see an error in your Firebase functions logs saying *"Billing account not configured. External network is not accessible and quotas are severely limited. Configure billing account to remove these restriction."* 
 
 ## API Layer
 
