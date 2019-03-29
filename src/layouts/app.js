@@ -68,40 +68,40 @@ class AppLayout extends React.Component {
     }
 
     componentDidMount = async () => {
-            let isAuth = false
-            const queryParams = window.location.search
-            const { shop: shopDomain } = this.state
+        let isAuth = false
+        const queryParams = window.location.search
+        const { shop: shopDomain } = this.state
 
-            if (queryParams && queryParams.includes('shop')) {
-                setHmacQueryCookie(queryParams)
-            }
+        if (queryParams && queryParams.includes('shop')) {
+            setHmacQueryCookie(queryParams)
+        }
 
-            isAuth = await isAuthenticated()
+        isAuth = await isAuthenticated()
 
-            const token = getShopToken(shopDomain)
+        const token = getShopToken(shopDomain)
 
-            if (isAuth) {
-                const userToken = getAuthUID(shopDomain);
+        if (isAuth) {
+            const userToken = getAuthUID(shopDomain);
 
-                if (userToken) {
-                    const app = import('firebase/app')
-                    const auth = import('firebase/auth')
-                    const database = import('firebase/firestore')
+            if (userToken) {
+                const app = import('firebase/app')
+                const auth = import('firebase/auth')
+                const database = import('firebase/firestore')
 
-                    Promise.all([app, auth, database]).then(values => {
-                        const firebase = getFirebase(values[0], userToken)
+                Promise.all([app, auth, database]).then(values => {
+                    const firebase = getFirebase(values[0], userToken)
 
-                        this.setState({
-                            firebase,
-                            token,
-                            isLoading: false,
-                        })
+                    this.setState({
+                        firebase,
+                        token,
+                        isLoading: false,
                     })
-                } else {
-                    // show login button/screen -- redirect to reauth
-                    console.warn('no user token found')
-                }
+                })
+            } else {
+                // show login button/screen -- redirect to reauth
+                console.warn('no user token found')
             }
+        }
     }
 
     render() {
