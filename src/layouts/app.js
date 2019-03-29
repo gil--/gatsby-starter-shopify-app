@@ -1,8 +1,11 @@
 import React from "react"
 import PropTypes from "prop-types"
 import { Link, navigate } from "gatsby"
-import GraphqlProvider from "../providers/graphql"
 import { AppProvider, Card } from "@shopify/polaris"
+
+import GraphqlProvider from "../providers/graphql"
+import { getFirebase } from "../helpers/firebase"
+import FirebaseContext from "../providers/firebase"
 
 import "@shopify/polaris/styles.css"
 
@@ -11,6 +14,7 @@ import {
     getShopDomain,
     isAuthenticated, 
     setHmacQueryCookie,
+    getAuthUID,
 } from "../helpers/auth"
 //import Header from "../components/header"
 
@@ -64,9 +68,9 @@ class AppLayout extends React.Component {
     }
 
     componentDidMount = async () => {
-        if (typeof window !== 'undefined') {
             let isAuth = false
             const queryParams = window.location.search
+            const { shop: shopDomain } = this.state
 
             if (queryParams && queryParams.includes('shop')) {
                 setHmacQueryCookie(queryParams)
@@ -74,19 +78,34 @@ class AppLayout extends React.Component {
 
             isAuth = await isAuthenticated()
 
-            const token = getShopToken(this.state.shop)
+            const token = getShopToken(shopDomain)
 
             if (isAuth) {
-                this.setState({
-                    token,
-                    isLoading: false,
-                })
+                const userToken = getAuthUID(shopDomain);
+
+                if (userToken) {
+                    const app = import('firebase/app')
+                    const auth = import('firebase/auth')
+                    const database = import('firebase/firestore')
+
+                    Promise.all([app, auth, database]).then(values => {
+                        const firebase = getFirebase(values[0], userToken)
+
+                        this.setState({
+                            firebase,
+                            token,
+                            isLoading: false,
+                        })
+                    })
+                } else {
+                    // show login button/screen -- redirect to reauth
+                    console.warn('no user token found')
+                }
             }
-        }
     }
 
     render() {
-        const { shop, token, isLoading } = this.state
+        const { shop, token, isLoading, firebase } = this.state
         //let appTitle = '' // convert to new Gatsy useStaticQuery hook
         let content = ''
 
@@ -104,12 +123,14 @@ class AppLayout extends React.Component {
             )
         } else {
             content = (
-                <GraphqlProvider
-                    shop={shop}
-                    token={token}
-                >
-                    {this.props.children}
-                </GraphqlProvider>
+                <FirebaseContext.Provider value={firebase}>
+                    <GraphqlProvider
+                        shop={shop}
+                        token={token}
+                    >
+                        {this.props.children}
+                    </GraphqlProvider>
+                </FirebaseContext.Provider>
             )
         }
 

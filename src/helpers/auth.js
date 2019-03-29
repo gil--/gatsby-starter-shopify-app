@@ -14,8 +14,9 @@ export const isAuthenticated = async (urlParamString) => {
     const shop = urlParams.get('shop')
     const token = urlParams.get('token')
     const expiresAt = urlParams.get('expires_at')
+    const uid = urlParams.get('uid')
 
-    if (isAuthValid({ token, expiresAt })) {
+    if (isAuthValid({ token, expiresAt, uid })) {
         return true
     } else {
         const shopifyDomain = shop || getShopDomain()
@@ -52,20 +53,22 @@ export const getShopToken = (domain) => {
     return cookies.get(`token_${shopDomain}`)
 }
 
-const isAuthValid = ({ token, expiresAt }) => {
+const isAuthValid = ({ token, expiresAt, uid }) => {
     const shopDomain = getShopDomain()
     const cookies = new Cookies()
     const cookie = {
         token: cookies.get(`token_${shopDomain}`),
         expiresAt: cookies.get(`expires_at_${shopDomain}`),
+        uid: cookies.get(`uid_${shopDomain}`),
     }
 
-    if (cookie.token && cookie.expiresAt) {
+    if (cookie.token && cookie.expiresAt && cookie.uid) {
         return true
-    } else if (token && expiresAt) {
+    } else if (token && expiresAt && uid) {
         const expirationDate = new Date()
         expirationDate.setTime(expirationDate.getTime() + (24 * 60 * 60 * 1000))
 
+        cookies.set(`uid_${shopDomain}`, uid, { path: '/', expires: expirationDate, })
         cookies.set(`token_${shopDomain}`, token, { path: '/', expires: expirationDate, })
         cookies.set(`expires_at_${shopDomain}`, expiresAt, { path: '/', expires: expirationDate, })
         removeHmacQueryCookie()
@@ -81,6 +84,7 @@ export const clearAppCookies = (shop) => {
     
     cookies.remove(`token_${shop}`)
     cookies.remove(`expires_at_${shop}`)
+    cookies.remove(`uid_${shop}`)
 
     return true
 }
@@ -209,4 +213,9 @@ const userAgentCanPartitionCookies = () => {
     }
 
     return navigator.userAgent.match(/Version\/12\.0\.?\d? Safari/)
+}
+
+export const getAuthUID = (shopDomain) => {
+    const cookies = new Cookies()
+    return cookies.get(`uid_${shopDomain}`)
 }
