@@ -92,7 +92,6 @@ exports.callback = functions.https.onRequest(async (request, response) => {
             const customToken = await admin.auth().createCustomToken(shop + tokenData.associated_user.id, {
                 shopifyToken: tokenData.access_token,
                 userId: tokenData.associated_user.id,
-                // TODO: subscription plan level
             })
 
             if (!customToken) {
@@ -117,22 +116,6 @@ exports.callback = functions.https.onRequest(async (request, response) => {
                     createdAt: admin.firestore.FieldValue.serverTimestamp(),
                     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
                 })
-
-                // add webhooks
-
-                /*
-
-                    const webhook = {
-                        topic: 'app/uninstalled',
-                        address: `${APP_URL}${UNINSTALL_ROUTE}`,
-                        format: 'json'
-                    };
-
-                    GDPR mandatory
-                    customers/redact
-                    shop/redact 
-
-                */
             } else {
                 shopRef.set({
                     hasAppInstalled: true,
@@ -154,6 +137,8 @@ exports.callback = functions.https.onRequest(async (request, response) => {
                 address: `${functions.config().shopify.app_url}/webhook/uninstall`,
                 format: 'json'
             };
+
+            // address: `${APP_URL}${UNINSTALL_ROUTE}`,
 
             shopify.webhook.create(webhook);
 

@@ -4,7 +4,9 @@ import ShopifyRoutePropagator from "@shopify/react-shopify-app-route-propagator"
 //import { Router } from "@reach/router"
 import gql from "graphql-tag"
 import { Query } from "react-apollo"
-import { Button, Card, Heading, Layout, SkeletonBodyText, SkeletonDisplayText } from "@shopify/polaris"
+import { Button, Card, Heading, Layout, List,  SkeletonBodyText, SkeletonDisplayText } from "@shopify/polaris"
+
+import { withFirebase } from "../../providers/firebase"
 
 //import Settings from "./settings"
 
@@ -28,7 +30,32 @@ class StoreInfo extends Component {
         polaris: PropTypes.object,
     }
 
+    state = {
+        subscriptionPlan: null,
+        hasActiveSubscription: null,
+    }
+
+    componentDidMount() {
+        const { firebase, shop } = this.props
+        
+        if (!shop) {
+            return
+        }
+        
+        const db = firebase.firestore()
+        db.collection('shops').doc(shop).onSnapshot(shopSnapshot => {
+            
+            const { subscriptionPlan, hasActiveSubscription } = shopSnapshot.data()
+
+            this.setState({
+                subscriptionPlan,
+                hasActiveSubscription,
+            })
+        })
+    }
+
     render() {
+        const { subscriptionPlan, hasActiveSubscription } = this.state
         return (
             <div>
                 <ShopifyRoutePropagator location={this.props.location} app={this.context.polaris.appBridge} />
@@ -73,6 +100,11 @@ class StoreInfo extends Component {
                                                 : <p>{shop.plan.displayName}</p>
                                         }
                                         </Card.Section>
+                                        <Card.Section subdued title="Subscription Plan">
+                                            <List>
+                                                <List.Item>{subscriptionPlan} ({hasActiveSubscription ? 'Active' : 'Inactive'})</List.Item>
+                                            </List>
+                                        </Card.Section>
                                     </Card>
                                 </Layout.Section>
                                 <Layout.Section>
@@ -90,4 +122,4 @@ class StoreInfo extends Component {
     }
 }
 
-export default StoreInfo
+export default withFirebase(StoreInfo)
