@@ -4,7 +4,7 @@ import ShopifyRoutePropagator from "@shopify/react-shopify-app-route-propagator"
 //import { Router } from "@reach/router"
 import gql from "graphql-tag"
 import { Query } from "react-apollo"
-import { Button, Card, Heading, Layout, List,  SkeletonBodyText, SkeletonDisplayText } from "@shopify/polaris"
+import { Button, Card, Heading, Layout,  SkeletonBodyText, SkeletonDisplayText } from "@shopify/polaris"
 
 import { withFirebase } from "../../providers/firebase"
 
@@ -101,9 +101,7 @@ class StoreInfo extends Component {
                                         }
                                         </Card.Section>
                                         <Card.Section subdued title="Subscription Plan">
-                                            <List>
-                                                <List.Item>{subscriptionPlan} ({hasActiveSubscription ? 'Active' : 'Inactive'})</List.Item>
-                                            </List>
+                                            <p>{subscriptionPlan} ({hasActiveSubscription ? 'Active' : 'Inactive'})</p>
                                         </Card.Section>
                                     </Card>
                                 </Layout.Section>
