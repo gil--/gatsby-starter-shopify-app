@@ -123,7 +123,7 @@ class AppLayout extends React.Component {
             )
         } else {
             content = (
-                <FirebaseContext.Provider value={firebase}>
+                <FirebaseContext.Provider value={{firebase, shop}}>
                     <GraphqlProvider
                         shop={shop}
                         token={token}
