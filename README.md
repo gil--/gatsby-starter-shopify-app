@@ -116,6 +116,6 @@ Whenever a merchant installs a Shopify app, they are presented with a permission
 
 ## Bugs/Issues
 - Not *yet* production ready
-- Missing Firebase on client-side
 - Missing Integration Tests
-- Missing better bug tracking/integration (BugSnag or equivalent)
+- Missing better bug tracking/integration (BugSnag, Google StackDriver or equivalent)
+- Infrequent oauth issues such as Safari cookie redirect
