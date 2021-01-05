@@ -10,7 +10,7 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "firebase-admin": "~7.0.0",
     "firebase-functions": "^2.2.0",
     "shopify-api-node": "^2.18.1",
